@@ -51,12 +51,17 @@ public class OBJLoader {
 				case "f":
 					Face face = null;
 					if (tokens.length > 4) {
-						face = new Face(tokens[1], tokens[2], tokens[3], tokens[4]);
+						//face = new Face(tokens[1], tokens[2], tokens[3], tokens[4]);
+						Face f1 = new Face(tokens[1], tokens[2], tokens[3], null);
+						Face f2 = new Face(tokens[3], tokens[1], tokens[4], null);
+						faces.add(f1);
+						faces.add(f2);
 					}
 					else if (tokens.length > 3) {
 						face = new Face(tokens[1], tokens[2], tokens[3], null);
 					}
-					faces.add(face);
+					if (face != null)
+						faces.add(face);
 					break;
 				default:
 					// Ignore other lines
