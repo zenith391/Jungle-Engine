@@ -6,11 +6,6 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-9">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="C:/Users/UserPC/Desktop/Randy RAMDE/Java/LWJGL/3.1.7 build 8/joml-1.9.9.jar"/>
 	<classpathentry kind="lib" path="C:/Users/UserPC/Desktop/Randy RAMDE/Java/LWJGL/3.1.7 build 8/joml-1.9.9-javadoc.jar"/>
 	<classpathentry kind="lib" path="C:/Users/UserPC/Desktop/Randy RAMDE/Java/LWJGL/3.1.7 build 8/joml-1.9.9-sources.jar"/>
@@ -68,6 +63,11 @@
 	<classpathentry kind="lib" path="C:/Users/UserPC/Desktop/Randy RAMDE/Java/LWJGL/3.1.7 build 8/steamworks4j-server-1.7.0-javadoc.jar"/>
 	<classpathentry kind="lib" path="C:/Users/UserPC/Desktop/Randy RAMDE/Java/LWJGL/3.1.7 build 8/steamworks4j-server-1.7.0-sources.jar"/>
 	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>

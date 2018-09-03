@@ -4,7 +4,7 @@ import org.joml.Vector3f;
 
 public class Spatial {
 
-    private final Mesh mesh;
+    private Mesh mesh;
 
     private final Vector3f position;
 
@@ -17,6 +17,10 @@ public class Spatial {
         position = new Vector3f(0, 0, 0);
         scale = 1;
         rotation = new Vector3f(0, 0, 0);
+    }
+    
+    public Spatial() {
+    	this(null);
     }
 
     public Vector3f getPosition() {
@@ -31,6 +35,10 @@ public class Spatial {
 
     public float getScale() {
         return scale;
+    }
+    
+    protected void setMesh(Mesh mesh) {
+    	this.mesh = mesh;
     }
 
     public void setScale(float scale) {

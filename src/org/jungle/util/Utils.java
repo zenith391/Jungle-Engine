@@ -1,8 +1,11 @@
 package org.jungle.util;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Utils {
@@ -25,8 +28,24 @@ public class Utils {
 		return b.toString();
 	}
 	
-	public static List<String> getAllLines(String path) throws IOException {
-		return List.of(Utils.loadResource(path).split("\n"));
+	public static float[] listToArray(List<Float> list) {
+        int size = list != null ? list.size() : 0;
+        float[] floatArr = new float[size];
+        for (int i = 0; i < size; i++) {
+            floatArr[i] = list.get(i);
+        }
+        return floatArr;
+	}
+	
+	public static List<String> readAllLines(String fileName) throws Exception {
+        List<String> list = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(Class.forName(Utils.class.getName()).getResourceAsStream(fileName)))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                list.add(line);
+            }
+        }
+        return list;
 	}
 
 }

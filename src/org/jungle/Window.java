@@ -53,6 +53,14 @@ public class Window {
 	public int getHeight() {
 		return height;
 	}
+	
+	public void setSize(int width, int height) {
+		glfwSetWindowSize(handle, width, height);
+	}
+	
+	public void setTitle(String title) {
+		glfwSetWindowTitle(handle, title);
+	}
 
 	public void init() {
 		GLFWErrorCallback.createPrint(System.err).set();
@@ -109,6 +117,8 @@ public class Window {
 		setClearColor(new Vector4f(0.f, 0.f, 0.f, 0.f));
 		
 		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
 	}
 	
 	public void show() {

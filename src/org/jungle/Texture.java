@@ -10,10 +10,12 @@ import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 
 public class Texture {
 
-    private final int id;
+    private int id = Integer.MIN_VALUE;
+    private int width, height;
+    private String fileName;
 
     public Texture(String fileName) throws Exception {
-        this(loadTexture(fileName));
+        this.fileName = fileName;
     }
 
     public Texture(int id) {
@@ -21,6 +23,17 @@ public class Texture {
     }
 
     public void bind() {
+    	if (id == Integer.MIN_VALUE) {
+    		if (fileName != null) {
+    			try {
+					id = loadTexture(fileName);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+    		} else {
+    			throw new IllegalStateException("ID not set and file name not providen.");
+    		}
+    	}
         glBindTexture(GL_TEXTURE_2D, id);
     }
 
@@ -28,13 +41,23 @@ public class Texture {
         return id;
     }
 
-    private static int loadTexture(String fileName) throws Exception {
+    public int getWidth() {
+		return width;
+	}
+
+	public int getHeight() {
+		return height;
+	}
+
+	private int loadTexture(String fileName) throws Exception {
         // Load Texture file
         PNGDecoder decoder = new PNGDecoder(new FileInputStream(fileName));
 
         // Load texture contents into a byte buffer
         ByteBuffer buf = ByteBuffer.allocateDirect(
                 4 * decoder.getWidth() * decoder.getHeight());
+        width = decoder.getWidth();
+        height = decoder.getHeight();
         decoder.decode(buf, decoder.getWidth() * 4, Format.RGBA);
         buf.flip();
 
@@ -46,8 +69,8 @@ public class Texture {
         // Tell OpenGL how to unpack the RGBA bytes. Each component is 1 byte size
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
         // Upload the texture data
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, decoder.getWidth(), decoder.getHeight(), 0,
