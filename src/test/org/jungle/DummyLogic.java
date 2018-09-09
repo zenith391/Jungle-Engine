@@ -69,15 +69,15 @@ public class DummyLogic implements IGameLogic {
 		mesh = OBJLoader.loadMesh("example/assets/evil.obj");
 		material = new Material(texture, 1f);
 		mesh.setMaterial(material);
-		ambientLight = new Vector3f(1.0f, 1.0f, 1.0f);
+		ambientLight = new Vector3f(0.5f, 0.5f, 0.5f);
 		
 		//mesh.setTexture(null);
 		//mesh.setColour(new Vector3f(1f, 1f, 1f));
 		ctx = new Context(game, new Camera());
 
 		ctx.getCamera().setPosition(32, 0, 32);
-		for (int i = 0; i < 128; i++) {
-			for (int j = 0; j < 128; j++) {
+		for (int i = 0; i < 64; i++) {
+			for (int j = 0; j < 64; j++) {
 				spatial = new Spatial(mesh);
 				spatial.setPosition(i, -1, j);
 				spatial.setScale(0.5f);
@@ -115,8 +115,10 @@ public class DummyLogic implements IGameLogic {
 		mouse = new MouseInput();
 		mouse.init(win);
 		
-		//TextObject tobj = new TextObject("DEMO", "example/texture/default_font.png", 16, 16);
-		//ctx.getHUD().addComponent(tobj);
+		TextObject tobj = new TextObject("DEMO", "example/texture/default_font.png", 16, 16);
+		tobj.setPosition(100, 100, 0);
+		tobj.setScale(0.2f);
+		ctx.getHUD().addComponent(tobj);
 	}
 
 	@Override
@@ -163,7 +165,7 @@ public class DummyLogic implements IGameLogic {
 			game.exit();
 		}
 		window.setClearColor(new Vector4f(color, color, color, 0.0f));
-		System.out.println(ambientLight);
+		//System.out.println(ambientLight);
 		render.render(window, ctx, ambientLight, pointLightList, spotLightList, directionalLight);
 	}
 

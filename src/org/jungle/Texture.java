@@ -16,10 +16,12 @@ public class Texture {
 
     public Texture(String fileName) throws Exception {
         this.fileName = fileName;
+        bind();
     }
 
     public Texture(int id) {
         this.id = id;
+        bind();
     }
 
     public void bind() {

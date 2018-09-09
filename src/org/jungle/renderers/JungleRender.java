@@ -28,11 +28,11 @@ public class JungleRender implements IRenderer {
 	private Matrix4f projectionMatrix;
 	private boolean inited = false;
 	private Transformation transformation;
-	private String shaders = "./example/shaders/default";
+	private String shaders = "example/shaders/default";
 
 	public static final int MAX_POINT_LIGHTS = 5;
 	public static final int MAX_SPOT_LIGHTS = 5;
-	private float specularPower = 1f;
+	private float specularPower = 0.75f;
 
 	public JungleRender() {
 
@@ -63,7 +63,7 @@ public class JungleRender implements IRenderer {
 		shaderProgram.createSpotLightListUniform("spotLights", MAX_SPOT_LIGHTS);
 		shaderProgram.createDirectionalLightUniform("directionalLight");
 		
-		//setupHudShader();
+		setupHudShader();
 		
 		inited = true;
 	}
@@ -84,7 +84,7 @@ public class JungleRender implements IRenderer {
 		}
 		
 		renderScene(ctx, ambientLight, pointLightList, spotLightList, directionalLight);
-		//renderHud(window, ctx.getHUD());
+		renderHud(window, ctx.getHUD());
 		
 	}
 	
