@@ -4,6 +4,7 @@ import de.matthiasmann.twl.utils.PNGDecoder;
 import de.matthiasmann.twl.utils.PNGDecoder.Format;
 
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
@@ -11,24 +12,28 @@ import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 public class Texture {
 
     private int id = Integer.MIN_VALUE;
-    private int width, height;
-    private String fileName;
+    protected int width, height;
+    protected InputStream is;
 
     public Texture(String fileName) throws Exception {
-        this.fileName = fileName;
+        this.is = new FileInputStream(fileName);
         bind();
+    }
+    
+    public Texture(InputStream is) {
+    	this.is = is;
+    	bind();
     }
 
     public Texture(int id) {
         this.id = id;
-        bind();
     }
 
     public void bind() {
     	if (id == Integer.MIN_VALUE) {
-    		if (fileName != null) {
+    		if (is != null) {
     			try {
-					id = loadTexture(fileName);
+					id = loadTexture(is);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -51,9 +56,9 @@ public class Texture {
 		return height;
 	}
 
-	private int loadTexture(String fileName) throws Exception {
+	private int loadTexture(InputStream is) throws Exception {
         // Load Texture file
-        PNGDecoder decoder = new PNGDecoder(new FileInputStream(fileName));
+        PNGDecoder decoder = new PNGDecoder(is);
 
         // Load texture contents into a byte buffer
         ByteBuffer buf = ByteBuffer.allocateDirect(

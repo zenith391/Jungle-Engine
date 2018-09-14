@@ -1,6 +1,7 @@
 package org.jungle.hud;
 
 import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +15,7 @@ public class TextObject extends Spatial {
 
 	private static final float ZPOS = 0.0f;
 
-	private static final int VERTICES_PER_QUAD = 4;
+	private static final int VERTICES_PER_QUAD = 2;
 
 	private String text;
 
@@ -31,6 +32,14 @@ public class TextObject extends Spatial {
 		this.setMesh(buildMesh(texture, numCols, numRows));
 	}
 	
+	public TextObject(String text, FontTexture tex) {
+		super();
+		numCols = tex.getHorizentalChars();
+		numRows = 1;
+		this.text = text;
+		this.setMesh(buildMesh(tex.getTexture(), numCols, numRows));
+	}
+	
 	public String getText() {
         return text;
     }
@@ -43,14 +52,14 @@ public class TextObject extends Spatial {
     }
 
 	private Mesh buildMesh(Texture texture, int numCols, int numRows) {
-        byte[] chars = text.getBytes(Charset.forName("ISO-8859-1"));
+        byte[] chars = text.getBytes(Charset.forName("windows-1252"));
         int numChars = chars.length;
 
         List<Float> positions = new ArrayList<>();
         List<Float> textCoords = new ArrayList<>();
         float[] normals   = new float[0];
         List<Integer> indices   = new ArrayList<>();
-
+        System.out.println(texture.getWidth());
         float tileWidth = (float)texture.getWidth() / (float)numCols;
         float tileHeight = (float)texture.getHeight() / (float)numRows;
         for(int i=0; i<numChars; i++) {

@@ -11,6 +11,8 @@ public class Spatial {
     private float scale;
 
     private final Vector3f rotation;
+    
+    private boolean selected;
 
     public Spatial(Mesh mesh) {
         this.mesh = mesh;
@@ -25,6 +27,14 @@ public class Spatial {
 
     public Vector3f getPosition() {
         return position;
+    }
+    
+    public boolean isSelected() {
+    	return selected;
+    }
+    
+    public void setSelected(boolean selected) {
+    	this.selected = selected;
     }
 
     public void setPosition(float x, float y, float z) {

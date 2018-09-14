@@ -38,6 +38,10 @@ public class JungleRender implements IRenderer {
 
 	}
 	
+	public Transformation getTransformation() {
+		return transformation;
+	}
+	
 	public void setShaderFolder(String shaders) {
 		if (inited)
 			throw new UnsupportedOperationException();
@@ -57,6 +61,7 @@ public class JungleRender implements IRenderer {
 		shaderProgram.createUniform("modelViewMatrix");
 		shaderProgram.createUniform("texture_sampler");
 		shaderProgram.createUniform("ambientLight");
+		shaderProgram.createUniform("selected");
 		shaderProgram.createUniform("specularPower");
 		shaderProgram.createMaterialUniform("material");
 		shaderProgram.createPointLightListUniform("pointLights", MAX_POINT_LIGHTS);
@@ -103,6 +108,7 @@ public class JungleRender implements IRenderer {
 			Matrix4f modelViewMatrix = transformation.getModelViewMatrix(spatial, viewMatrix);
 			shaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
 			shaderProgram.setUniform("material", spatial.getMesh().getMaterial());
+			shaderProgram.setUniform("selected", spatial.isSelected() ? 1f : 0f);
 			spatial.getMesh().render();
 		}
 		

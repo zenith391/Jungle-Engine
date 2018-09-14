@@ -10,16 +10,21 @@ import org.jungle.Window;
 import org.jungle.game.Context;
 import org.jungle.game.Game;
 import org.jungle.game.IGameLogic;
+import org.jungle.hud.FontTexture;
 import org.jungle.hud.TextObject;
 import org.jungle.renderers.IRenderer;
 import org.jungle.renderers.JungleRender;
 import org.jungle.util.DirectionalLight;
 import org.jungle.util.Material;
+import org.jungle.util.MeshSelectionDetector;
 import org.jungle.util.OBJLoader;
 import org.jungle.util.PointLight;
 import org.jungle.util.SpotLight;
 
 import static org.lwjgl.glfw.GLFW.*;
+
+import java.awt.Font;
+import java.util.Random;
 
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -53,9 +58,14 @@ public class DummyLogic implements IGameLogic {
 	private PointLight[] pointLightList;
 	private SpotLight[] spotLightList;
 	private DirectionalLight directionalLight;
+	private MeshSelectionDetector msd;
 
 	public static final float CAMERA_POS_STEP = 0.11F;
 	public static final float MOUSE_SENSITIVITY = 1.11F;
+	
+	private FontTexture fontTexture;
+	
+	private TextObject obj;
 
 	public DummyLogic() {
 		render = new JungleRender();
@@ -69,6 +79,7 @@ public class DummyLogic implements IGameLogic {
 		mesh = OBJLoader.loadMesh("example/assets/evil.obj");
 		material = new Material(texture, 1f);
 		mesh.setMaterial(material);
+		msd = new MeshSelectionDetector((JungleRender) render);
 		ambientLight = new Vector3f(0.5f, 0.5f, 0.5f);
 		
 		//mesh.setTexture(null);
@@ -115,10 +126,23 @@ public class DummyLogic implements IGameLogic {
 		mouse = new MouseInput();
 		mouse.init(win);
 		
-		TextObject tobj = new TextObject("DEMO", "example/texture/default_font.png", 16, 16);
-		tobj.setPosition(100, 100, 0);
-		tobj.setScale(0.2f);
+		fontTexture = new FontTexture(new Font("Arial", Font.PLAIN, 12));
+		
+		addText("Jungle Test v1.0 (debug/1.0)", 0, 0);
+		addText("Dynamic Fonts: OFF", 0, 14);
+		addText("Caching: OFF", 0, 28);
+		
+		obj = new TextObject("0", fontTexture);
+		obj.setPosition(0, 40, 0);
+		ctx.getHUD().addComponent(obj);
+	}
+	
+	public TextObject addText(String text, int x, int y) throws Exception {
+		TextObject tobj = new TextObject(text, fontTexture);
+		tobj.setPosition(x, y, 0);
+		tobj.setScale(0.25f);
 		ctx.getHUD().addComponent(tobj);
+		return tobj;
 	}
 
 	@Override
@@ -144,6 +168,8 @@ public class DummyLogic implements IGameLogic {
 
 	@Override
 	public void update(float interval) {
+		//Random r = new Random();
+		//obj.setText("" + r.nextInt(100));
 		Camera camera = ctx.getCamera();
 		camera.movePosition(cameraInc.x * CAMERA_POS_STEP, cameraInc.y * CAMERA_POS_STEP,
 				cameraInc.z * CAMERA_POS_STEP);
@@ -156,6 +182,7 @@ public class DummyLogic implements IGameLogic {
 		if (rotation > 360) {
 			rotation = 0;
 		}
+		msd.selectGameItem(ctx.getSpatials(), camera);
 		//spatial.setRotation(rotation, rotation, rotation);
 	}
 
