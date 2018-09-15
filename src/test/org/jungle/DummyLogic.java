@@ -144,6 +144,8 @@ public class DummyLogic implements IGameLogic {
 		ctx.getHUD().addComponent(tobj);
 		return tobj;
 	}
+	
+	int cooldown;
 
 	@Override
 	public void input(Window window) {
@@ -163,6 +165,27 @@ public class DummyLogic implements IGameLogic {
 			cameraInc.y = -1;
 		} else if (window.isKeyPressed(GLFW_KEY_X)) {
 			cameraInc.y = 1;
+		}
+		
+		if (mouse.isLeftButtonPressed()) {
+			Spatial s = msd.getSelectedSpatial();
+			if (s != null && cooldown == 0) {
+				ctx.removeSpatial(s);
+				cooldown = 10;
+			}
+		}
+		if (window.isKeyPressed(GLFW_KEY_P)) {
+			Spatial s = msd.getSelectedSpatial();
+			if (s != null && cooldown == 0) {
+				Spatial spatial = new Spatial(mesh);
+				spatial.setScale(0.5f);
+				spatial.setPosition(s.getPosition().x(), s.getPosition().y() + 1f, s.getPosition().z());
+				ctx.addSpatial(spatial);
+				cooldown = 20;
+			}
+		}
+		if (cooldown > 0) {
+			cooldown--;
 		}
 	}
 
