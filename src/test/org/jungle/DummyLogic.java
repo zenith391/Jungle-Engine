@@ -10,13 +10,13 @@ import org.jungle.Window;
 import org.jungle.game.Context;
 import org.jungle.game.Game;
 import org.jungle.game.IGameLogic;
-import org.jungle.hud.FontTexture;
 import org.jungle.hud.TextObject;
 import org.jungle.renderers.IRenderer;
 import org.jungle.renderers.JungleRender;
 import org.jungle.util.DirectionalLight;
 import org.jungle.util.Material;
 import org.jungle.util.MeshSelectionDetector;
+import org.jungle.util.MouseOperatedMSD;
 import org.jungle.util.OBJLoader;
 import org.jungle.util.PointLight;
 import org.jungle.util.SpotLight;
@@ -58,12 +58,10 @@ public class DummyLogic implements IGameLogic {
 	private PointLight[] pointLightList;
 	private SpotLight[] spotLightList;
 	private DirectionalLight directionalLight;
-	private MeshSelectionDetector msd;
+	private MouseOperatedMSD msd;
 
 	public static final float CAMERA_POS_STEP = 0.11F;
 	public static final float MOUSE_SENSITIVITY = 1.11F;
-	
-	private FontTexture fontTexture;
 	
 	private TextObject obj;
 
@@ -79,24 +77,27 @@ public class DummyLogic implements IGameLogic {
 		mesh = OBJLoader.loadMesh("example/assets/evil.obj");
 		material = new Material(texture, 1f);
 		mesh.setMaterial(material);
-		msd = new MeshSelectionDetector((JungleRender) render);
+		msd = new MouseOperatedMSD((JungleRender) render);
 		ambientLight = new Vector3f(0.5f, 0.5f, 0.5f);
 		
 		//mesh.setTexture(null);
 		//mesh.setColour(new Vector3f(1f, 1f, 1f));
 		ctx = new Context(game, new Camera());
+		ctx.getHUD().init(win);
 
 		ctx.getCamera().setPosition(32, 0, 32);
-		for (int i = 0; i < 64; i++) {
-			for (int j = 0; j < 64; j++) {
-				spatial = new Spatial(mesh);
-				spatial.setPosition(i, -1, j);
-				spatial.setScale(0.5f);
-				ctx.addSpatial(spatial);
+		for (int i = 0; i < 16; i++) {
+			for (int j = 0; j < 16; j++) {
+				for (int k = 0; k < 16; k++) {
+					spatial = new Spatial(mesh);
+					spatial.setPosition(i, k, j);
+					spatial.setScale(0.5f);
+					ctx.addSpatial(spatial);
+				}
 			}
 		}
 		spatial = new Spatial(mesh);
-		spatial.setPosition(5, 0f, 5);
+		spatial.setPosition(8, 17f, 8);
 		spatial.setScale(0.5f);
 		ctx.addSpatial(spatial);
 //		spatial = new Spatial(mesh);
@@ -120,29 +121,11 @@ public class DummyLogic implements IGameLogic {
         SpotLight spotLight = new SpotLight(pointLight, coneDir, cutoff);
         spotLightList = new SpotLight[]{spotLight};
 
-        lightPosition = new Vector3f(0, 1, 0);
+        lightPosition = new Vector3f(0, 0.75f, 0.25f);
         directionalLight = new DirectionalLight(new Vector3f(1, 1, 1), lightPosition, lightIntensity);
 		cameraInc = new Vector3f();
 		mouse = new MouseInput();
 		mouse.init(win);
-		
-		fontTexture = new FontTexture(new Font("Arial", Font.PLAIN, 12));
-		
-		addText("Jungle Test v1.0 (debug/1.0)", 0, 0);
-		addText("Dynamic Fonts: OFF", 0, 14);
-		addText("Caching: OFF", 0, 28);
-		
-		obj = new TextObject("0", fontTexture);
-		obj.setPosition(0, 40, 0);
-		ctx.getHUD().addComponent(obj);
-	}
-	
-	public TextObject addText(String text, int x, int y) throws Exception {
-		TextObject tobj = new TextObject(text, fontTexture);
-		tobj.setPosition(x, y, 0);
-		tobj.setScale(0.25f);
-		ctx.getHUD().addComponent(tobj);
-		return tobj;
 	}
 	
 	int cooldown;
@@ -166,22 +149,15 @@ public class DummyLogic implements IGameLogic {
 		} else if (window.isKeyPressed(GLFW_KEY_X)) {
 			cameraInc.y = 1;
 		}
-		
+		if (window.isKeyPressed(GLFW_KEY_ESCAPE)) {
+			mouse.setGrabbed(false);
+		}
 		if (mouse.isLeftButtonPressed()) {
+			mouse.setGrabbed(true);
 			Spatial s = msd.getSelectedSpatial();
 			if (s != null && cooldown == 0) {
 				ctx.removeSpatial(s);
-				cooldown = 10;
-			}
-		}
-		if (window.isKeyPressed(GLFW_KEY_P)) {
-			Spatial s = msd.getSelectedSpatial();
-			if (s != null && cooldown == 0) {
-				Spatial spatial = new Spatial(mesh);
-				spatial.setScale(0.5f);
-				spatial.setPosition(s.getPosition().x(), s.getPosition().y() + 1f, s.getPosition().z());
-				ctx.addSpatial(spatial);
-				cooldown = 20;
+				cooldown = 1;
 			}
 		}
 		if (cooldown > 0) {
@@ -205,8 +181,8 @@ public class DummyLogic implements IGameLogic {
 		if (rotation > 360) {
 			rotation = 0;
 		}
-		msd.selectGameItem(ctx.getSpatials(), camera);
-		//spatial.setRotation(rotation, rotation, rotation);
+		msd.selectSpatial(ctx.getSpatials(), ctx.getWindow(), mouse.getCurrentPos(), camera);
+		spatial.setRotation(rotation, rotation, rotation);
 	}
 
 	@Override

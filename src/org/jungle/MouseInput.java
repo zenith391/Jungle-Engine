@@ -17,14 +17,45 @@ public class MouseInput {
     private boolean leftButtonPressed = false;
 
     private boolean rightButtonPressed = false;
+    
+    private boolean grabbed = false;
+    private Window win;
 
     public MouseInput() {
         previousPos = new Vector2d(-1, -1);
         currentPos = new Vector2d(0, 0);
         displVec = new Vector2f();
     }
+    
+    public void setGrabbed(boolean grab) {
+    	if (win == null) {
+    		throw new IllegalStateException("init() must be called before setGrabbed");
+    	}
+    	if (grabbed != grab) {
+    		if (grab == false) {
+    			
+    		}
+    		if (grab == true) {
+    			glfwSetInputMode(win.getWindowHandle(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    		}
+    		this.grabbed = grab;
+    	}
+    }
+    
+    public Vector2d getCurrentPos() {
+    	return currentPos;
+    }
+    
+    public double getX() {
+    	return currentPos.x;
+    }
+    
+    public double getY() {
+    	return currentPos.y;
+    }
 
     public void init(Window window) {
+    	win = window;
         glfwSetCursorPosCallback(window.getWindowHandle(), (windowHandle, xpos, ypos) -> {
             currentPos.x = xpos;
             currentPos.y = ypos;
@@ -73,6 +104,11 @@ public class MouseInput {
         }
         previousPos.x = currentPos.x;
         previousPos.y = currentPos.y;
+//        if (grabbed) {
+//        	glfwSetCursorPos(window.getWindowHandle(), window.getWidth()/2, window.getHeight()/2);
+//        	previousPos.x = window.getWidth()/2;
+//            previousPos.y = window.getHeight()/2;
+//        }
     }
 
     public boolean isLeftButtonPressed() {

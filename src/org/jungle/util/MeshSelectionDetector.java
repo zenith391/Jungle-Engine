@@ -9,11 +9,11 @@ import org.jungle.renderers.JungleRender;
 
 public class MeshSelectionDetector {
 
-	private JungleRender render;
-	private Vector3f dir = new Vector3f();
-	private Vector3f min = new Vector3f(), max = new Vector3f();
-	private Vector2f nearFar = new Vector2f();
-	private Spatial selectedSpatial;
+	protected JungleRender render;
+	protected Vector3f dir = new Vector3f();
+	protected Vector3f min = new Vector3f(), max = new Vector3f();
+	protected Vector2f nearFar = new Vector2f();
+	protected Spatial selectedSpatial;
 	
 	public MeshSelectionDetector(JungleRender render) {
 		this.render = render;
@@ -27,17 +27,20 @@ public class MeshSelectionDetector {
 		return selectedSpatial;
 	}
 	
-	public void selectGameItem(Spatial[] gameItems, Camera camera) {
+	public void selectSpatial(Spatial[] gameItems, Camera camera) {
+		dir = render.getTransformation().getViewMatrix(camera).positiveZ(dir).negate();
+	    selectSpatial(gameItems, camera.getPosition(), dir);
+	}
+	
+	public void selectSpatial(Spatial[] gameItems, Vector3f position, Vector3f dir) {
 	    float closestDistance = Float.POSITIVE_INFINITY;
-	    
-	    dir = render.getTransformation().getViewMatrix(camera).positiveZ(dir).negate();
 	    for (Spatial gameItem : gameItems) {
 	        gameItem.setSelected(false);
 	        min.set(gameItem.getPosition());
 	        max.set(gameItem.getPosition());
 	        min.add(-gameItem.getScale(), -gameItem.getScale(), -gameItem.getScale());
 	        max.add(gameItem.getScale(), gameItem.getScale(), gameItem.getScale());
-	        if (Intersectionf.intersectRayAab(camera.getPosition(), dir, min, max, nearFar) && nearFar.x < closestDistance) {
+	        if (Intersectionf.intersectRayAab(position, dir, min, max, nearFar) && nearFar.x < closestDistance) {
 	            closestDistance = nearFar.x;
 	            selectedSpatial = gameItem;
 	        }

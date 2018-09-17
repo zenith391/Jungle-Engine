@@ -7,15 +7,17 @@ public class Game {
 	protected boolean running;
 	protected Window win;
 	protected IGameLogic logic;
+	private GameOptions opt;
 
 	public Game() {
 
 	}
 
-	public void start() {
+	public void start(GameOptions opt) {
+		this.opt = opt;
 		running = true;
 		win = new Window();
-		win.init();
+		win.init(opt);
 		win.show();
 		logic.bind(this);
 		try {
@@ -32,8 +34,8 @@ public class Game {
 	}
 	
 	public double getTime() {
-        return System.nanoTime() / 1000_000_000.0;
-}
+        return System.nanoTime() / 1000000000.0;
+	}
 
 	public void loop() {
 		double secsPerUpdate = 1.0d / 30.0d;
@@ -79,7 +81,6 @@ public class Game {
 	}
 
 	public void render() {
-		
 		logic.render(win);
 		win.render();
 	}

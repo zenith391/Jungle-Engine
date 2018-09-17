@@ -10,7 +10,7 @@ import org.jungle.Mesh;
 import org.jungle.Spatial;
 import org.jungle.Window;
 import org.jungle.game.Context;
-import org.jungle.hud.IHud;
+import org.jungle.hud.Hud;
 import org.jungle.util.DirectionalLight;
 import org.jungle.util.PointLight;
 import org.jungle.util.ShaderProgram;
@@ -24,8 +24,7 @@ public class JungleRender implements IRenderer {
 
 	private static final float FOV = (float) Math.toRadians(70.f);
 	private static final float Z_NEAR = 0.01f;
-	private static final float Z_FAR = 1000.0f;
-	private Matrix4f projectionMatrix;
+	private static final float Z_FAR = 100.0f;
 	private boolean inited = false;
 	private Transformation transformation;
 	private String shaders = "example/shaders/default";
@@ -51,8 +50,8 @@ public class JungleRender implements IRenderer {
 	@Override
 	public void init(Window window) throws Exception {
 		transformation = new Transformation();
-		projectionMatrix = transformation.getProjectionMatrix(FOV, window.getWidth(), window.getHeight(), Z_NEAR,
-				Z_FAR);
+		window.setProjectionMatrix(transformation.getProjectionMatrix(FOV, window.getWidth(), window.getHeight(), Z_NEAR,
+				Z_FAR));
 		shaderProgram = new ShaderProgram();
 		shaderProgram.createVertexShader(Utils.loadResource(shaders + "/vertex.vs"));
 		shaderProgram.createFragmentShader(Utils.loadResource(shaders + "/fragment.fs"));
@@ -74,7 +73,7 @@ public class JungleRender implements IRenderer {
 	}
 
 	public void clear() {
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	}
 
 	@Override
@@ -84,54 +83,36 @@ public class JungleRender implements IRenderer {
 		if (window.isResized()) {
 			glViewport(0, 0, window.getWidth(), window.getHeight());
 			window.setResized(false);
-			projectionMatrix = transformation.getProjectionMatrix(FOV, window.getWidth(), window.getHeight(), Z_NEAR,
-					Z_FAR);
+			window.setProjectionMatrix(transformation.getProjectionMatrix(FOV, window.getWidth(), window.getHeight(), Z_NEAR,
+					Z_FAR));
 		}
 		
 		renderScene(ctx, ambientLight, pointLightList, spotLightList, directionalLight);
-		renderHud(window, ctx.getHUD());
+		ctx.getHUD().render(window);
 		
 	}
 	
 	public void renderScene(Context ctx, Vector3f ambientLight, PointLight[] pointLightList, SpotLight[] spotLightList, DirectionalLight directionalLight) {
-		Spatial[] spatials = ctx.getSpatials();
 		shaderProgram.bind();
 
-		shaderProgram.setUniform("projectionMatrix", projectionMatrix);
+		shaderProgram.setUniform("projectionMatrix", ctx.getWindow().getProjectionMatrix());
 		shaderProgram.setUniform("texture_sampler", 0);
 
 		Matrix4f viewMatrix = transformation.getViewMatrix(ctx.getCamera());
 		
 		renderLights(viewMatrix, ambientLight, pointLightList, spotLightList, directionalLight);
 
-		for (Spatial spatial : spatials) {
-			Matrix4f modelViewMatrix = transformation.getModelViewMatrix(spatial, viewMatrix);
-			shaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
-			shaderProgram.setUniform("material", spatial.getMesh().getMaterial());
-			shaderProgram.setUniform("selected", spatial.isSelected() ? 1f : 0f);
-			spatial.getMesh().render();
+		for (Mesh mesh : ctx.getMeshMap().keySet()) {
+		    shaderProgram.setUniform("material", mesh.getMaterial());
+		    mesh.renderList(ctx.getMeshMap().get(mesh), (Spatial gameItem) -> {
+		        Matrix4f modelViewMatrix = transformation.getModelViewMatrix(gameItem, viewMatrix);
+		        shaderProgram.setUniform("selected", gameItem.isSelected() ? 1f : 0f);
+		        shaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
+		    }
+		    );
 		}
 		
 		shaderProgram.unbind();
-	}
-	
-	private void renderHud(Window window, IHud hud) {
-
-	    hudShaderProgram.bind();
-
-	    Matrix4f ortho = transformation.getOrthoProjectionMatrix(0, window.getWidth(), window.getHeight(), 0);
-	    for (Spatial component : hud.getComponents()) {
-	        Mesh mesh = component.getMesh();
-	        // Set ortohtaphic and model matrix for this HUD item
-	        Matrix4f projModelMatrix = transformation.getOrtoProjModelMatrix(component, ortho);
-	        hudShaderProgram.setUniform("projModelMatrix", projModelMatrix);
-	        hudShaderProgram.setUniform("colour", component.getMesh().getMaterial().getAmbientColour());
-
-	        // Render the mesh for this HUD item
-	        mesh.render();
-	    }
-
-	    hudShaderProgram.unbind();
 	}
 	
 	private void setupHudShader() throws Exception {

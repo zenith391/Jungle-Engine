@@ -4,6 +4,8 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
+
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.*;
 import static org.lwjgl.opengl.GL15.*;
@@ -104,10 +106,10 @@ public class Mesh {
         return vertexCount;
     }
 
-    public void render() {
+    private void initRender() {
         Texture texture = material.getTexture();
         if (texture != null) {
-            // Activate first texture bank
+            // Activate firs texture bank
             glActiveTexture(GL_TEXTURE0);
             // Bind the texture
             glBindTexture(GL_TEXTURE_2D, texture.getId());
@@ -118,15 +120,37 @@ public class Mesh {
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
         glEnableVertexAttribArray(2);
+    }
 
-        glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
-
+    private void endRender() {
         // Restore state
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
         glDisableVertexAttribArray(2);
         glBindVertexArray(0);
+
         glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
+    public void render() {
+        initRender();
+
+        glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
+
+        endRender();
+    }
+
+    public void renderList(List<Spatial> spatials, Consumer<Spatial> consumer) {
+        initRender();
+
+        for (Spatial gameItem : spatials) {
+            // Set up data requiered by gameItem
+            consumer.accept(gameItem);
+            // Render this game item
+            glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
+        }
+
+        endRender();
     }
 
     public void cleanUp() {

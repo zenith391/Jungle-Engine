@@ -1,47 +1,82 @@
 package org.jungle.game;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.jungle.Camera;
+import org.jungle.Mesh;
 import org.jungle.Spatial;
 import org.jungle.Window;
-import org.jungle.hud.DefaultHUD;
-import org.jungle.hud.IHud;
+import org.jungle.hud.Hud;
 
 public class Context {
 
 	private Window win;
 	private Game game;
 	private Camera camera;
-	private ArrayList<Spatial> spatials;
-	private IHud hud;
+	private Hud hud;
+	private Map<Mesh, List<Spatial>> meshMap;
 	
 	public Context(Game g, Camera c) {
 		camera = c;
 		game = g;
 		win = g.win;
-		spatials = new ArrayList<>();
-		hud = new DefaultHUD();
+		meshMap = new HashMap<>();
+		hud = new Hud();
 	}
 	
-	public void setHUD(IHud hud) {
-		this.hud = hud;
+	public void setSpatials(Spatial[] gameItems) {
+	    int numGameItems = gameItems != null ? gameItems.length : 0;
+	    for (int i=0; i<numGameItems; i++) {
+	        Spatial gameItem = gameItems[i];
+	        Mesh mesh = gameItem.getMesh();
+	        List<Spatial> list = meshMap.get(mesh);
+	        if ( list == null ) {
+	            list = new ArrayList<>();
+	            meshMap.put(mesh, list);
+	        }
+	        list.add(gameItem);
+	    }
 	}
 	
-	 public IHud getHUD() {
-		 return hud;
-	 }
+	public Map<Mesh, List<Spatial>> getMeshMap() {
+		return meshMap;
+	}
+	
+	public Hud getHUD() {
+		return hud;
+	}
 	
 	public Spatial[] getSpatials() {
-		return spatials.toArray(new Spatial[spatials.size()]);
+		ArrayList<Spatial> spl = new ArrayList<>();
+		for (Mesh mesh : meshMap.keySet()) {
+			List<Spatial> sp = meshMap.get(mesh);
+			for (Spatial s : sp) {
+				spl.add(s);
+			}
+		}
+		return spl.toArray(new Spatial[spl.size()]);
 	}
 	
 	public void addSpatial(Spatial s) {
-		spatials.add(s);
+		Mesh mesh = s.getMesh();
+        List<Spatial> list = meshMap.get(mesh);
+        if ( list == null ) {
+            list = new ArrayList<>();
+            meshMap.put(mesh, list);
+        }
+        list.add(s);
 	}
 	
 	public void removeSpatial(Spatial s) {
-		spatials.remove(s);
+		for (Mesh mesh : meshMap.keySet()) {
+			List<Spatial> sp = meshMap.get(mesh);
+			if (sp.contains(s)) {
+				sp.remove(s);
+			}
+		}
 	}
 
 	public Window getWindow() {

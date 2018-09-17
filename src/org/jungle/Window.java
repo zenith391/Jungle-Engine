@@ -7,7 +7,9 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 import java.nio.IntBuffer;
 
+import org.joml.Matrix4f;
 import org.joml.Vector4f;
+import org.jungle.game.GameOptions;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
@@ -18,16 +20,31 @@ public class Window {
 	private long handle;
 	private int width, height;
 	private boolean resized;
+	private Matrix4f projectionMatrix;
+	private GameOptions opt;
+	private boolean fullscreen = false;
 	
 	private Vector4f clearColor;
 	
 	public Vector4f getClearColor() {
 		return clearColor;
 	}
+	
+	public Matrix4f getProjectionMatrix() {
+		return projectionMatrix;
+	}
+	
+	public void setProjectionMatrix(Matrix4f projectionMatrix) {
+		this.projectionMatrix = projectionMatrix;
+	}
 
 	public void setClearColor(Vector4f clearColor) {
 		this.clearColor = clearColor;
 		glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
+	}
+	
+	public GameOptions getOptions() {
+		return opt;
 	}
 
 	public boolean isResized() {
@@ -61,8 +78,26 @@ public class Window {
 	public void setTitle(String title) {
 		glfwSetWindowTitle(handle, title);
 	}
+	
+	public void setFullscreen(boolean fullscreen) {
+		if (fullscreen != this.fullscreen) {
+			this.fullscreen = fullscreen;
+			if (fullscreen) {
+				glfwDefaultWindowHints();
+				glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+				glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE); // the window will be resizable
+				glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+			    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+			    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+			    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+			    glfwDestroyWindow(handle);
+			    handle = glfwCreateWindow(620, 480, "Jungle Game", NULL, NULL);;
+			}
+		}
+	}
 
-	public void init() {
+	public void init(GameOptions opt) {
+		this.opt = opt;
 		GLFWErrorCallback.createPrint(System.err).set();
 		if (!glfwInit())
 			throw new IllegalStateException("Unable to initialize GLFW");
@@ -70,7 +105,7 @@ public class Window {
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 	    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
@@ -94,15 +129,11 @@ public class Window {
 		
 		
 		glfwSetKeyCallback(handle, (window, key, scancode, action, mods) -> {
-			if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE ) {
-				glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
-			} else {
-				if (action == GLFW_PRESS) {
-					Keyboard.pressedKeys.add(key);
-				}
-				if (action == GLFW_RELEASE) {
-					Keyboard.pressedKeys.remove((Integer) key);
-				}
+			if (action == GLFW_PRESS) {
+				Keyboard.pressedKeys.add(key);
+			}
+			if (action == GLFW_RELEASE) {
+				Keyboard.pressedKeys.remove((Integer) key);
 			}
 		});
 		
@@ -117,10 +148,27 @@ public class Window {
 		setClearColor(new Vector4f(0.f, 0.f, 0.f, 0.f));
 		
 		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_STENCIL_TEST);
+		if (opt.showTriangles) {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		}
+		if (opt.antialiasing) {
+		    glfwWindowHint(GLFW_SAMPLES, 4);
+		}
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	}
+	
+	public void restoreState() {
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_STENCIL_TEST);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        if (opt.cullFace) {
+            glEnable(GL_CULL_FACE);
+            glCullFace(GL_BACK);
+        }
 	}
 	
 	public void show() {
@@ -128,7 +176,7 @@ public class Window {
 	}
 	
 	public boolean isKeyPressed(int keyCode) {
-		return glfwGetKey(handle, keyCode) == GLFW_PRESS;
+		return Keyboard.pressedKeys.contains(keyCode);
 	}
 	
 	public void update() {
