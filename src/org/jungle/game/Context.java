@@ -45,8 +45,12 @@ public class Context {
 		return meshMap;
 	}
 	
-	public Hud getHUD() {
+	public Hud getHud() {
 		return hud;
+	}
+	
+	public void setHud(Hud hud) {
+		this.hud = hud;
 	}
 	
 	public Spatial[] getSpatials() {

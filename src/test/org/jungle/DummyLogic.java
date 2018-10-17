@@ -1,7 +1,6 @@
 package test.org.jungle;
 
 import org.jungle.Camera;
-import org.jungle.Keyboard;
 import org.jungle.Mesh;
 import org.jungle.MouseInput;
 import org.jungle.Spatial;
@@ -10,12 +9,12 @@ import org.jungle.Window;
 import org.jungle.game.Context;
 import org.jungle.game.Game;
 import org.jungle.game.IGameLogic;
+import org.jungle.hud.Font;
 import org.jungle.hud.TextObject;
 import org.jungle.renderers.IRenderer;
 import org.jungle.renderers.JungleRender;
 import org.jungle.util.DirectionalLight;
 import org.jungle.util.Material;
-import org.jungle.util.MeshSelectionDetector;
 import org.jungle.util.MouseOperatedMSD;
 import org.jungle.util.OBJLoader;
 import org.jungle.util.PointLight;
@@ -23,29 +22,15 @@ import org.jungle.util.SpotLight;
 
 import static org.lwjgl.glfw.GLFW.*;
 
-import java.awt.Font;
-import java.util.Random;
-
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 public class DummyLogic implements IGameLogic {
 
-	private int displxInc = 0;
-
-	private int displyInc = 0;
-
 	private MouseInput mouse;
 
 	private Vector3f cameraInc;
-
-	private int scaleInc = 0;
-	
-	private float spotAngle = 0, spotInc = 1, lightAngle = 0;
-
-	private float color = 0.2f;
-	private int direction = 0;
 	private Game game;
 	private IRenderer render;
 	private Context ctx;
@@ -67,7 +52,6 @@ public class DummyLogic implements IGameLogic {
 
 	public DummyLogic() {
 		render = new JungleRender();
-		lightAngle = -75f;
 	}
 
 	@Override
@@ -80,10 +64,11 @@ public class DummyLogic implements IGameLogic {
 		msd = new MouseOperatedMSD((JungleRender) render);
 		ambientLight = new Vector3f(0.5f, 0.5f, 0.5f);
 		
-		//mesh.setTexture(null);
-		//mesh.setColour(new Vector3f(1f, 1f, 1f));
 		ctx = new Context(game, new Camera());
-		ctx.getHUD().init(win);
+		//ctx.getHUD().init(win);
+//		ctx.getHUD().registerFont("OpenSans-Bold", Font.DEFAULT_FONT_FILE);
+//		obj = new TextObject("Some very long test this game will crash idk why", new Font("OpenSans-Bold", 24f), 20, 20);
+//		ctx.getHUD().add(obj);
 
 		ctx.getCamera().setPosition(32, 0, 32);
 		for (int i = 0; i < 16; i++) {
@@ -126,6 +111,7 @@ public class DummyLogic implements IGameLogic {
 		cameraInc = new Vector3f();
 		mouse = new MouseInput();
 		mouse.init(win);
+		//mouse.setGrabbed(true);
 	}
 	
 	int cooldown;
@@ -173,7 +159,7 @@ public class DummyLogic implements IGameLogic {
 		camera.movePosition(cameraInc.x * CAMERA_POS_STEP, cameraInc.y * CAMERA_POS_STEP,
 				cameraInc.z * CAMERA_POS_STEP);
 		// Update camera based on mouse
-		if (mouse.isRightButtonPressed()) {
+		if (mouse.isRightButtonPressed() || mouse.isGrabbed()) {
 			Vector2f rotVec = mouse.getDisplVec();
 			camera.moveRotation(rotVec.x * MOUSE_SENSITIVITY, rotVec.y * MOUSE_SENSITIVITY, 0);
 		}
@@ -183,6 +169,7 @@ public class DummyLogic implements IGameLogic {
 		}
 		msd.selectSpatial(ctx.getSpatials(), ctx.getWindow(), mouse.getCurrentPos(), camera);
 		spatial.setRotation(rotation, rotation, rotation);
+		mouse.clearPos(game.getWindow().getWidth()/2, game.getWindow().getHeight()/2);
 	}
 
 	@Override
@@ -190,7 +177,6 @@ public class DummyLogic implements IGameLogic {
 		if (window.shouldClose()) {
 			game.exit();
 		}
-		window.setClearColor(new Vector4f(color, color, color, 0.0f));
 		//System.out.println(ambientLight);
 		render.render(window, ctx, ambientLight, pointLightList, spotLightList, directionalLight);
 	}

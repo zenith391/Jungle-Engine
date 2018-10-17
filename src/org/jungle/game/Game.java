@@ -12,6 +12,10 @@ public class Game {
 	public Game() {
 
 	}
+	
+	public Window getWindow() {
+		return win;
+	}
 
 	public void start(GameOptions opt) {
 		this.opt = opt;

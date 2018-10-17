@@ -24,7 +24,7 @@ public class JungleRender implements IRenderer {
 
 	private static final float FOV = (float) Math.toRadians(70.f);
 	private static final float Z_NEAR = 0.01f;
-	private static final float Z_FAR = 100.0f;
+	private static final float Z_FAR = 1000.0f;
 	private boolean inited = false;
 	private Transformation transformation;
 	private String shaders = "example/shaders/default";
@@ -67,7 +67,7 @@ public class JungleRender implements IRenderer {
 		shaderProgram.createSpotLightListUniform("spotLights", MAX_SPOT_LIGHTS);
 		shaderProgram.createDirectionalLightUniform("directionalLight");
 		
-		setupHudShader();
+		//setupHudShader();
 		
 		inited = true;
 	}
@@ -88,8 +88,7 @@ public class JungleRender implements IRenderer {
 		}
 		
 		renderScene(ctx, ambientLight, pointLightList, spotLightList, directionalLight);
-		ctx.getHUD().render(window);
-		
+		ctx.getHud().render(window);
 	}
 	
 	public void renderScene(Context ctx, Vector3f ambientLight, PointLight[] pointLightList, SpotLight[] spotLightList, DirectionalLight directionalLight) {
@@ -112,6 +111,7 @@ public class JungleRender implements IRenderer {
 		    );
 		}
 		
+
 		shaderProgram.unbind();
 	}
 	
