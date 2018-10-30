@@ -5,5 +5,6 @@ public class GameOptions {
 	public boolean antialiasing = false;
 	public boolean showTriangles = false;
 	public boolean cullFace = true;
+	public boolean frustumCulling = true;
 	
 }

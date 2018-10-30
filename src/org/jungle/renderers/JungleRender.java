@@ -5,12 +5,10 @@ import static org.lwjgl.opengl.GL11.*;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
-import org.jungle.Camera;
 import org.jungle.Mesh;
 import org.jungle.Spatial;
 import org.jungle.Window;
 import org.jungle.game.Context;
-import org.jungle.hud.Hud;
 import org.jungle.util.DirectionalLight;
 import org.jungle.util.PointLight;
 import org.jungle.util.ShaderProgram;
@@ -20,7 +18,6 @@ import org.jungle.util.Utils;
 public class JungleRender implements IRenderer {
 
 	private ShaderProgram shaderProgram;
-	private ShaderProgram hudShaderProgram;
 
 	private static final float FOV = (float) Math.toRadians(70.f);
 	private static final float Z_NEAR = 0.01f;
@@ -28,10 +25,11 @@ public class JungleRender implements IRenderer {
 	private boolean inited = false;
 	private Transformation transformation;
 	private String shaders = "example/shaders/default";
+	private FrustumCullingFilter filter;
 
 	public static final int MAX_POINT_LIGHTS = 5;
 	public static final int MAX_SPOT_LIGHTS = 5;
-	private float specularPower = 0.75f;
+	private float specularPower = 10f;
 
 	public JungleRender() {
 
@@ -67,7 +65,9 @@ public class JungleRender implements IRenderer {
 		shaderProgram.createSpotLightListUniform("spotLights", MAX_SPOT_LIGHTS);
 		shaderProgram.createDirectionalLightUniform("directionalLight");
 		
-		//setupHudShader();
+		if (window.getOptions().frustumCulling) {
+			filter = new FrustumCullingFilter();
+		}
 		
 		inited = true;
 	}
@@ -87,6 +87,10 @@ public class JungleRender implements IRenderer {
 					Z_FAR));
 		}
 		
+		if (filter != null) {
+			filter.updateFrustum(window.getProjectionMatrix(), transformation.getViewMatrix(ctx.getCamera()));
+			filter.filter(ctx.getMeshMap());
+		}
 		renderScene(ctx, ambientLight, pointLightList, spotLightList, directionalLight);
 		ctx.getHud().render(window);
 	}
@@ -104,9 +108,11 @@ public class JungleRender implements IRenderer {
 		for (Mesh mesh : ctx.getMeshMap().keySet()) {
 		    shaderProgram.setUniform("material", mesh.getMaterial());
 		    mesh.renderList(ctx.getMeshMap().get(mesh), (Spatial gameItem) -> {
-		        Matrix4f modelViewMatrix = transformation.getModelViewMatrix(gameItem, viewMatrix);
-		        shaderProgram.setUniform("selected", gameItem.isSelected() ? 1f : 0f);
-		        shaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
+		    	if (gameItem.isInFrustum() || filter == null) {
+		    		Matrix4f modelViewMatrix = transformation.getModelViewMatrix(gameItem, viewMatrix);
+			        shaderProgram.setUniform("selected", gameItem.isSelected() ? 1f : 0f);
+			        shaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
+		    	}
 		    }
 		    );
 		}
@@ -114,17 +120,6 @@ public class JungleRender implements IRenderer {
 
 		shaderProgram.unbind();
 	}
-	
-	private void setupHudShader() throws Exception {
-        hudShaderProgram = new ShaderProgram();
-        hudShaderProgram.createVertexShader(Utils.loadResource(shaders + "/hud_vertex.vs"));
-        hudShaderProgram.createFragmentShader(Utils.loadResource(shaders + "/hud_fragment.fs"));
-        hudShaderProgram.link();
-
-        // Create uniforms for Orthographic-model projection matrix and base colour
-        hudShaderProgram.createUniform("projModelMatrix");
-        hudShaderProgram.createUniform("colour");
-    }
 
 	private void renderLights(Matrix4f viewMatrix, Vector3f ambientLight, PointLight[] pointLightList,
 			SpotLight[] spotLightList, DirectionalLight directionalLight) {

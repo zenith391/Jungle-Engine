@@ -13,6 +13,7 @@ public class Spatial {
     private final Vector3f rotation;
     
     private boolean selected;
+    private boolean inFrustum;
 
     public Spatial(Mesh mesh) {
         this.mesh = mesh;
@@ -37,7 +38,15 @@ public class Spatial {
     	this.selected = selected;
     }
 
-    public void setPosition(float x, float y, float z) {
+    public boolean isInFrustum() {
+		return inFrustum;
+	}
+
+	public void setInFrustum(boolean inFrustum) {
+		this.inFrustum = inFrustum;
+	}
+
+	public void setPosition(float x, float y, float z) {
         this.position.x = x;
         this.position.y = y;
         this.position.z = z;

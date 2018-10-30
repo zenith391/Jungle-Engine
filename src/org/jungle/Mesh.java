@@ -24,8 +24,18 @@ public class Mesh {
     private final int vertexCount;
 
     private Material material;
+    
+    private float boundingRadius = 1.5f;
 
-    public Mesh(float[] positions, float[] textCoords, float[] normals, int[] indices) {
+    public float getBoundingRadius() {
+		return boundingRadius;
+	}
+
+	public void setBoundingRadius(float boundingRadius) {
+		this.boundingRadius = boundingRadius;
+	}
+
+	public Mesh(float[] positions, float[] textCoords, float[] normals, int[] indices) {
         FloatBuffer posBuffer = null;
         FloatBuffer textCoordsBuffer = null;
         FloatBuffer vecNormalsBuffer = null;

@@ -28,6 +28,7 @@ public class Context {
 	}
 	
 	public void setSpatials(Spatial[] gameItems) {
+		meshMap.clear();
 	    int numGameItems = gameItems != null ? gameItems.length : 0;
 	    for (int i=0; i<numGameItems; i++) {
 	        Spatial gameItem = gameItems[i];

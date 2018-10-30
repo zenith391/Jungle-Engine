@@ -22,14 +22,14 @@ public class MouseInput {
     private Window win;
 
     public MouseInput() {
-        previousPos = new Vector2d(-1, -1);
+        previousPos = new Vector2d(0, 0);
         currentPos = new Vector2d(0, 0);
         displVec = new Vector2f();
     }
     
     public void clearPos(int x, int y) {
     	currentPos.set(x, y);
-    	displVec.set(x, y);
+    	displVec.set(0, 0);
     	previousPos.set(x, y);
     }
     
@@ -46,7 +46,7 @@ public class MouseInput {
     			glfwSetInputMode(win.getWindowHandle(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     		}
     		if (grab == true) {
-    			glfwSetInputMode(win.getWindowHandle(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    			glfwSetInputMode(win.getWindowHandle(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
     		}
     		this.grabbed = grab;
     	}
@@ -100,7 +100,7 @@ public class MouseInput {
     public void input(Window window) {
         displVec.x = 0;
         displVec.y = 0;
-        if (previousPos.x > 0 && previousPos.y > 0 && inWindow) {
+        if (inWindow) {
             double deltax = currentPos.x - previousPos.x;
             double deltay = currentPos.y - previousPos.y;
             boolean rotateX = deltax != 0;
