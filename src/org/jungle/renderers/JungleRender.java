@@ -18,8 +18,7 @@ import org.jungle.util.Utils;
 public class JungleRender implements IRenderer {
 
 	private ShaderProgram shaderProgram;
-
-	private static final float FOV = (float) Math.toRadians(70.f);
+	
 	private static final float Z_NEAR = 0.01f;
 	private static final float Z_FAR = 1000.0f;
 	private boolean inited = false;
@@ -48,7 +47,7 @@ public class JungleRender implements IRenderer {
 	@Override
 	public void init(Window window) throws Exception {
 		transformation = new Transformation();
-		window.setProjectionMatrix(transformation.getProjectionMatrix(FOV, window.getWidth(), window.getHeight(), Z_NEAR,
+		window.setProjectionMatrix(transformation.getProjectionMatrix((float) Math.toRadians(70.0f), window.getWidth(), window.getHeight(), Z_NEAR,
 				Z_FAR));
 		shaderProgram = new ShaderProgram();
 		shaderProgram.createVertexShader(Utils.loadResource(shaders + "/vertex.vs"));
@@ -83,12 +82,12 @@ public class JungleRender implements IRenderer {
 		if (window.isResized()) {
 			glViewport(0, 0, window.getWidth(), window.getHeight());
 			window.setResized(false);
-			window.setProjectionMatrix(transformation.getProjectionMatrix(FOV, window.getWidth(), window.getHeight(), Z_NEAR,
+			window.setProjectionMatrix(transformation.getProjectionMatrix(ctx.getCamera().getFov(), window.getWidth(), window.getHeight(), Z_NEAR,
 					Z_FAR));
 		}
-		
+		ctx.getCamera().setViewMatrix(transformation.getViewMatrix(ctx.getCamera()));
 		if (filter != null) {
-			filter.updateFrustum(window.getProjectionMatrix(), transformation.getViewMatrix(ctx.getCamera()));
+			filter.updateFrustum(window.getProjectionMatrix(), ctx.getCamera().getViewMatrix());
 			filter.filter(ctx.getMeshMap());
 		}
 		renderScene(ctx, ambientLight, pointLightList, spotLightList, directionalLight);
@@ -101,7 +100,7 @@ public class JungleRender implements IRenderer {
 		shaderProgram.setUniform("projectionMatrix", ctx.getWindow().getProjectionMatrix());
 		shaderProgram.setUniform("texture_sampler", 0);
 
-		Matrix4f viewMatrix = transformation.getViewMatrix(ctx.getCamera());
+		Matrix4f viewMatrix = ctx.getCamera().getViewMatrix();
 		
 		renderLights(viewMatrix, ambientLight, pointLightList, spotLightList, directionalLight);
 
@@ -112,7 +111,9 @@ public class JungleRender implements IRenderer {
 		    		Matrix4f modelViewMatrix = transformation.getModelViewMatrix(gameItem, viewMatrix);
 			        shaderProgram.setUniform("selected", gameItem.isSelected() ? 1f : 0f);
 			        shaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
+			        return true;
 		    	}
+		    	return false;
 		    }
 		    );
 		}

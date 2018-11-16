@@ -5,6 +5,7 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.*;
@@ -150,14 +151,16 @@ public class Mesh {
         endRender();
     }
 
-    public void renderList(List<Spatial> spatials, Consumer<Spatial> consumer) {
+    public void renderList(List<Spatial> spatials, Function<Spatial, Boolean> consumer) {
         initRender();
 
         for (Spatial gameItem : spatials) {
             // Set up data requiered by gameItem
-            consumer.accept(gameItem);
+            Boolean render = consumer.apply(gameItem);
             // Render this game item
-            glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
+            if (render) {
+            	glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
+            }
         }
 
         endRender();

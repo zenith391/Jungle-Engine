@@ -1,5 +1,6 @@
 package org.jungle;
 
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 public class Camera {
@@ -8,12 +9,30 @@ public class Camera {
 
 	private final Vector3f rotation;
 	
-	private double fov;
+	private Matrix4f viewMatrix;
+	
+	private float fov;
 
 	public Camera() {
 		position = new Vector3f(32, 0, 32);
 		rotation = new Vector3f(0, 0, 0);
-		fov = Math.toRadians(70.0f);
+		fov = (float) Math.toRadians(70.0f);
+	}
+
+	public Matrix4f getViewMatrix() {
+		return viewMatrix;
+	}
+
+	public void setViewMatrix(Matrix4f viewMatrix) {
+		this.viewMatrix = viewMatrix;
+	}
+	
+	public float getFov() {
+		return fov;
+	}
+	
+	public void setFov(float fov) {
+		this.fov = fov;
 	}
 
 	public Camera(Vector3f position, Vector3f rotation) {
