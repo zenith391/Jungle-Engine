@@ -22,13 +22,13 @@ public class Game {
 		running = true;
 		win = new Window();
 		win.init(opt);
-		win.show();
 		logic.bind(this);
 		try {
 			logic.init(win);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		win.show();
 		loop();
 		logic.cleanup();
 	}
@@ -42,7 +42,7 @@ public class Game {
 	}
 
 	public void loop() {
-		double secsPerUpdate = 1.0d / 30.0d;
+		double secsPerUpdate = 1.0d / 60.0d;
 		double previous = getTime();
 		double steps = 0.0;
 		while (running) {

@@ -43,7 +43,7 @@ public class MouseOperatedMSD extends MeshSelectionDetector {
         tmpVec.z = -1.0f;
         tmpVec.w = 0.0f;
         
-        Matrix4f viewMatrix = render.getTransformation().getViewMatrix(camera);
+        Matrix4f viewMatrix = camera.getViewMatrix();
         invViewMatrix.set(viewMatrix);
         invViewMatrix.invert();
         tmpVec.mul(invViewMatrix);

@@ -26,7 +26,7 @@ public class Mesh {
 
     private Material material;
     
-    private float boundingRadius = 1.5f;
+    private float boundingRadius = 1.25f;
 
     public float getBoundingRadius() {
 		return boundingRadius;
