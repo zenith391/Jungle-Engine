@@ -13,6 +13,7 @@ import org.jungle.game.GameOptions;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryStack;
 
 public class Window {
@@ -82,25 +83,46 @@ public class Window {
 	public void setFullscreen(boolean fullscreen) {
 		if (fullscreen != this.fullscreen) {
 			this.fullscreen = fullscreen;
+			glfwDestroyWindow(handle);
 			if (fullscreen) {
-				glfwDefaultWindowHints();
-				glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-				glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE); // the window will be resizable
-				glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-			    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-			    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-			    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-			    glfwDestroyWindow(handle);
-			    handle = glfwCreateWindow(620, 480, "Jungle Game", NULL, NULL);;
+				init(opt, glfwGetPrimaryMonitor());
+			} else {
+				init(opt);
 			}
 		}
 	}
-
-	public void init(GameOptions opt) {
+	
+	public void setOptions(GameOptions opt) {
 		this.opt = opt;
-		GLFWErrorCallback.createPrint(System.err).set();
-		if (!glfwInit())
-			throw new IllegalStateException("Unable to initialize GLFW");
+		glfwMakeContextCurrent(handle);
+		if (opt.showTriangles) {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		} else {
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		}
+		if (opt.antialiasing) {
+		    glfwWindowHint(GLFW_SAMPLES, 2);
+		} else {
+			glfwWindowHint(GLFW_SAMPLES, 0);
+		}
+		if (opt.cullFace) {
+			glEnable(GL_CULL_FACE);
+			glCullFace(GL_BACK);
+		} else {
+			glDisable(GL_CULL_FACE);
+		}
+		setFullscreen(opt.fullscreen);
+	}
+	
+	private static boolean inited;
+
+	private void init(GameOptions opt, long monitorID) {
+		if (!inited) {
+			GLFWErrorCallback.createPrint(System.err).set();
+			if (!glfwInit())
+				throw new IllegalStateException("Unable to initialize GLFW");
+			inited = true;
+		}
 		glfwDefaultWindowHints();
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
@@ -109,7 +131,7 @@ public class Window {
 	    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-		handle = glfwCreateWindow(620, 480, "Jungle Game", NULL, NULL);
+		handle = glfwCreateWindow(620, 480, "Jungle Game", monitorID, NULL);
 		if (handle == NULL)
 			throw new RuntimeException("Failed to create the GLFW window");
 		try (MemoryStack stack = stackPush()) {
@@ -149,18 +171,13 @@ public class Window {
 		
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_STENCIL_TEST);
-		if (opt.showTriangles) {
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		}
-		if (opt.antialiasing) {
-		    glfwWindowHint(GLFW_SAMPLES, 2);
-		}
-		if (opt.cullFace) {
-			glEnable(GL_CULL_FACE);
-			glCullFace(GL_BACK);
-		}
+		setOptions(opt);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	}
+	
+	public void init(GameOptions opt) {
+		init(opt, NULL);
 	}
 	
 	public void restoreState() {

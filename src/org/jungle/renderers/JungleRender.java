@@ -28,7 +28,7 @@ public class JungleRender implements IRenderer {
 
 	public static final int MAX_POINT_LIGHTS = 5;
 	public static final int MAX_SPOT_LIGHTS = 5;
-	private float specularPower = 10f;
+	private float specularPower = 16f;
 
 	public JungleRender() {
 
@@ -90,8 +90,10 @@ public class JungleRender implements IRenderer {
 			filter.updateFrustum(window.getProjectionMatrix(), ctx.getCamera().getViewMatrix());
 			filter.filter(ctx.getMeshMap());
 		}
+		//System.out.println("filtered!");
 		renderScene(ctx, ambientLight, pointLightList, spotLightList, directionalLight);
 		ctx.getHud().render(window);
+		//window.restoreState();
 	}
 	
 	public void renderScene(Context ctx, Vector3f ambientLight, PointLight[] pointLightList, SpotLight[] spotLightList, DirectionalLight directionalLight) {
@@ -114,11 +116,9 @@ public class JungleRender implements IRenderer {
 			        return true;
 		    	}
 		    	return false;
-		    }
-		    );
+		    });
 		}
 		
-
 		shaderProgram.unbind();
 	}
 

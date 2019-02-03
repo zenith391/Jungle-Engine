@@ -4,7 +4,7 @@ import org.joml.Vector3f;
 
 public class Spatial {
 
-    private Mesh mesh;
+    private Mesh[] meshes;
 
     private final Vector3f position;
 
@@ -16,14 +16,21 @@ public class Spatial {
     private boolean inFrustum;
 
     public Spatial(Mesh mesh) {
-        this.mesh = mesh;
+        this.meshes = new Mesh[] {mesh};
         position = new Vector3f(0, 0, 0);
         scale = 1;
         rotation = new Vector3f(0, 0, 0);
     }
     
+    public Spatial(Mesh[] meshes) {
+    	this.meshes = meshes;
+    	position = new Vector3f(0, 0, 0);
+    	scale = 1;
+    	rotation = new Vector3f(0, 0, 0);
+    }
+    
     public Spatial() {
-    	this(null);
+    	this((Mesh) null);
     }
 
     public Vector3f getPosition() {
@@ -56,9 +63,11 @@ public class Spatial {
         return scale;
     }
     
-    protected void setMesh(Mesh mesh) {
-    	this.mesh = mesh;
+    protected void setMeshes(Mesh[] mesh) {
+    	this.meshes = mesh;
     }
+    
+    
 
     public void setScale(float scale) {
         this.scale = scale;
@@ -75,6 +84,10 @@ public class Spatial {
     }
 
     public Mesh getMesh() {
-        return mesh;
+        return meshes[0];
+    }
+    
+    public Mesh[] getMeshes() {
+    	return meshes;
     }
 }

@@ -10,7 +10,6 @@ import org.jungle.game.Context;
 import org.jungle.game.Game;
 import org.jungle.game.IGameLogic;
 import org.jungle.hud.Font;
-import org.jungle.hud.TextObject;
 import org.jungle.renderers.IRenderer;
 import org.jungle.renderers.JungleRender;
 import org.jungle.util.DirectionalLight;
@@ -19,6 +18,7 @@ import org.jungle.util.MouseOperatedMSD;
 import org.jungle.util.OBJLoader;
 import org.jungle.util.PointLight;
 import org.jungle.util.SpotLight;
+import org.jungle.util.StaticMeshesLoader;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -36,7 +36,7 @@ public class DummyLogic implements IGameLogic {
 	private Context ctx;
 
 	private Spatial spatial;
-	private Mesh mesh;
+	private Mesh[] mesh;
 	private Material material;
 	
 	private Vector3f ambientLight;
@@ -48,7 +48,6 @@ public class DummyLogic implements IGameLogic {
 	public static final float CAMERA_POS_STEP = 0.11F;
 	public static final float MOUSE_SENSITIVITY = 1.11F;
 	
-	private TextObject obj;
 
 	public DummyLogic() {
 		render = new JungleRender();
@@ -56,39 +55,27 @@ public class DummyLogic implements IGameLogic {
 
 	@Override
 	public void init(Window win) throws Exception {
-		render.init(win);
 		Texture texture = new Texture("example/assets/grassblock.png");
-		mesh = OBJLoader.loadMesh("example/assets/evil.obj");
+		System.out.println("Loading mesh..");
+		Mesh[] meshs = StaticMeshesLoader.load("example/assets/evil.obj", "example/assets/");
+		System.out.println("Mesh loaded!");
+		System.out.println("meshes: " + meshs.length);
+		mesh = meshs;
 		material = new Material(texture, 1f);
-		mesh.setMaterial(material);
+		for (Mesh m : mesh) {
+			m.setMaterial(material);
+		}
 		msd = new MouseOperatedMSD((JungleRender) render);
-		ambientLight = new Vector3f(0.5f, 0.5f, 0.5f);
+		ambientLight = new Vector3f(0.7f, 0.7f, 0.7f);
 		
 		ctx = new Context(game, new Camera());
-		//ctx.getHUD().init(win);
-//		ctx.getHUD().registerFont("OpenSans-Bold", Font.DEFAULT_FONT_FILE);
-//		obj = new TextObject("Some very long test this game will crash idk why", new Font("OpenSans-Bold", 24f), 20, 20);
-//		ctx.getHUD().add(obj);
-
-		ctx.getCamera().setPosition(32, 0, 32);
-		for (int i = 0; i < 16; i++) {
-			for (int j = 0; j < 16; j++) {
-				for (int k = 0; k < 16; k++) {
-					spatial = new Spatial(mesh);
-					spatial.setPosition(i, k, j);
-					spatial.setScale(0.5f);
-					ctx.addSpatial(spatial);
-				}
-			}
-		}
-		spatial = new Spatial(mesh);
-		spatial.setPosition(8, 17f, 8);
-		spatial.setScale(0.5f);
+		
+		
+		
+		spatial = new Spatial(meshs);
+		spatial.setPosition(0, 3, 0);
+		spatial.setScale(2f);
 		ctx.addSpatial(spatial);
-//		spatial = new Spatial(mesh);
-//		spatial.setScale(0.5f);
-//		spatial.setPosition(0, 0, -2f);
-//		ctx.addSpatial(spatial);
 		Vector3f lightPosition = new Vector3f(0, 2, 1);
         float lightIntensity = 1.0f;
         PointLight pointLight = new PointLight(new Vector3f(1, 1, 1), lightPosition, lightIntensity);
@@ -112,6 +99,9 @@ public class DummyLogic implements IGameLogic {
 		mouse = new MouseInput();
 		mouse.init(win);
 		//mouse.setGrabbed(true);
+		System.out.println("Initing renderer..");
+		render.init(win);
+		System.out.println("Renderer: OK!");
 	}
 	
 	int cooldown;
@@ -142,7 +132,7 @@ public class DummyLogic implements IGameLogic {
 			mouse.setGrabbed(true);
 			Spatial s = msd.getSelectedSpatial();
 			if (s != null && cooldown == 0) {
-				ctx.removeSpatial(s);
+				//ctx.removeSpatial(s);
 				cooldown = 1;
 			}
 		}
@@ -153,8 +143,7 @@ public class DummyLogic implements IGameLogic {
 
 	@Override
 	public void update(float interval) {
-		//Random r = new Random();
-		//obj.setText("" + r.nextInt(100));
+		//System.out.println("upd");
 		Camera camera = ctx.getCamera();
 		camera.movePosition(cameraInc.x * CAMERA_POS_STEP, cameraInc.y * CAMERA_POS_STEP,
 				cameraInc.z * CAMERA_POS_STEP);
@@ -170,15 +159,21 @@ public class DummyLogic implements IGameLogic {
 		msd.selectSpatial(ctx.getSpatials(), ctx.getWindow(), mouse.getCurrentPos(), camera);
 		spatial.setRotation(rotation, rotation, rotation);
 		mouse.clearPos(game.getWindow().getWidth()/2, game.getWindow().getHeight()/2);
+		
+		ctx.getCamera().setPosition(35, -20, 0);
+		ctx.getCamera().setRotation(325, 265, 0);
+		//System.out.println(ctx.getCamera().getRotation().z);
 	}
 
 	@Override
 	public void render(Window window) {
+		//System.out.println("ren");
 		if (window.shouldClose()) {
 			game.exit();
 		}
 		//System.out.println(ambientLight);
 		render.render(window, ctx, ambientLight, pointLightList, spotLightList, directionalLight);
+		//System.out.println("rendered!");
 	}
 
 	@Override

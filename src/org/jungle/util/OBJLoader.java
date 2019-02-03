@@ -10,6 +10,7 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.jungle.Mesh;
 
+@Deprecated
 public class OBJLoader {
 
 	public OBJLoader() {

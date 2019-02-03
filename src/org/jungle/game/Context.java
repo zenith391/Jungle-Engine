@@ -32,13 +32,14 @@ public class Context {
 	    int numGameItems = gameItems != null ? gameItems.length : 0;
 	    for (int i=0; i<numGameItems; i++) {
 	        Spatial gameItem = gameItems[i];
-	        Mesh mesh = gameItem.getMesh();
-	        List<Spatial> list = meshMap.get(mesh);
-	        if ( list == null ) {
-	            list = new ArrayList<>();
-	            meshMap.put(mesh, list);
+	        for (Mesh mesh : gameItem.getMeshes()) {
+		        List<Spatial> list = meshMap.get(mesh);
+		        if ( list == null ) {
+		            list = new ArrayList<>();
+		            meshMap.put(mesh, list);
+		        }
+		        list.add(gameItem);
 	        }
-	        list.add(gameItem);
 	    }
 	}
 	
@@ -66,13 +67,14 @@ public class Context {
 	}
 	
 	public void addSpatial(Spatial s) {
-		Mesh mesh = s.getMesh();
-        List<Spatial> list = meshMap.get(mesh);
-        if ( list == null ) {
-            list = new ArrayList<>();
-            meshMap.put(mesh, list);
-        }
-        list.add(s);
+		for (Mesh mesh : s.getMeshes()) {
+	        List<Spatial> list = meshMap.get(mesh);
+	        if ( list == null ) {
+	            list = new ArrayList<>();
+	            meshMap.put(mesh, list);
+	        }
+	        list.add(s);
+		}
 	}
 	
 	public void removeSpatial(Spatial s) {

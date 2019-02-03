@@ -13,6 +13,7 @@ import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
 
+import org.joml.Vector4f;
 import org.jungle.util.Material;
 import org.lwjgl.system.MemoryUtil;
 
@@ -27,6 +28,8 @@ public class Mesh {
     private Material material;
     
     private float boundingRadius = 1.25f;
+    
+    public static final Vector4f DEFAULT_COLOR = new Vector4f(0.75f, 0.75f, 0.75f, 1.f);
 
     public float getBoundingRadius() {
 		return boundingRadius;
@@ -155,11 +158,11 @@ public class Mesh {
         initRender();
 
         for (Spatial gameItem : spatials) {
-            // Set up data requiered by gameItem
+            // Set up data required by gameItem
             Boolean render = consumer.apply(gameItem);
             // Render this game item
             if (render) {
-            	glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
+            	render();
             }
         }
 

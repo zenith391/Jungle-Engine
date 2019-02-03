@@ -29,7 +29,19 @@ public class GameOptionsPrompt extends JDialog {
 	private JCheckBox chckbxNewCheckBox_1;
 	private JCheckBox chckbxWireframeRender;
 	private JLabel lblAdvanced;
+	private JCheckBox chckbxCullFace;
+	private JCheckBox chckbxNewCheckBox;
 
+	public GameOptions generateOptions() {
+		GameOptions opt = new GameOptions();
+		opt.antialiasing = false;
+		opt.cullFace = chckbxCullFace.isSelected();
+		opt.showTriangles = chckbxWireframeRender.isSelected();
+		opt.frustumCulling = chckbxNewCheckBox_1.isSelected();
+		opt.fullscreen = !chckbxNewCheckBox.isSelected();
+		return opt;
+	}
+	
 	/**
 	 * Create the dialog.
 	 */
@@ -50,30 +62,34 @@ public class GameOptionsPrompt extends JDialog {
 		lblAntialising.setBounds(10, 36, 66, 14);
 		contentPanel.add(lblAntialising);
 		
-		JComboBox comboBox = new JComboBox();
-		comboBox.setModel(new DefaultComboBoxModel(new String[] {"x4", "x2", "No"}));
+		JComboBox<String> comboBox = new JComboBox<>();
+		comboBox.setModel(new DefaultComboBoxModel<>(new String[] {"x4", "x2", "No"}));
 		comboBox.setSelectedIndex(2);
 		comboBox.setBounds(86, 32, 53, 22);
 		contentPanel.add(comboBox);
 		
-		JCheckBox chckbxNewCheckBox = new JCheckBox("Windowed");
+		chckbxNewCheckBox = new JCheckBox("Windowed");
 		chckbxNewCheckBox.setSelected(true);
-		chckbxNewCheckBox.setEnabled(false);
-		chckbxNewCheckBox.setBounds(320, 36, 97, 23);
+		chckbxNewCheckBox.setBounds(316, 32, 97, 23);
 		contentPanel.add(chckbxNewCheckBox);
 		
 		chckbxNewCheckBox_1 = new JCheckBox("Frustum Culling");
 		chckbxNewCheckBox_1.setSelected(true);
-		chckbxNewCheckBox_1.setBounds(153, 82, 122, 23);
+		chckbxNewCheckBox_1.setBounds(153, 102, 178, 23);
 		contentPanel.add(chckbxNewCheckBox_1);
 		
 		chckbxWireframeRender = new JCheckBox("Wireframe Render");
-		chckbxWireframeRender.setBounds(153, 118, 122, 23);
+		chckbxWireframeRender.setBounds(153, 128, 178, 23);
 		contentPanel.add(chckbxWireframeRender);
 		
 		lblAdvanced = new JLabel("Advanced");
-		lblAdvanced.setBounds(178, 61, 53, 14);
+		lblAdvanced.setBounds(176, 60, 125, 14);
 		contentPanel.add(lblAdvanced);
+		
+		chckbxCullFace = new JCheckBox("Cull Face");
+		chckbxCullFace.setSelected(true);
+		chckbxCullFace.setBounds(153, 154, 178, 23);
+		contentPanel.add(chckbxCullFace);
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setBackground(SystemColor.info);
