@@ -3,7 +3,9 @@
 Jungle Engine is a 3D engine for Java mostly used privately for Cubz and other 3D projects.
 
 **Dependencies** (better to configure with Maven):
+
 All of theses assets can be found on [LWJGL 3 website](https://www.lwjgl.org/customize)
+
 Later version of libraries can be used, but not their new features to keep backward compatibility.
 
 | Package                   | Version |
