@@ -6,15 +6,6 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/UserPC/Desktop/Randy RAMDE/Java/LWJGL/3.1.7 build 8/joml-1.9.9.jar"/>
-	<classpathentry kind="lib" path="C:/Users/UserPC/Desktop/Randy RAMDE/Java/LWJGL/3.1.7 build 8/lwjgl.jar"/>
-	<classpathentry kind="lib" path="C:/Users/UserPC/Desktop/Randy RAMDE/Java/LWJGL/3.1.7 build 8/lwjgl-glfw.jar"/>
-	<classpathentry kind="lib" path="C:/Users/UserPC/Desktop/Randy RAMDE/Java/LWJGL/3.1.7 build 8/lwjgl-glfw-natives-windows.jar"/>
-	<classpathentry kind="lib" path="C:/Users/UserPC/Desktop/Randy RAMDE/Java/LWJGL/3.1.7 build 8/lwjgl-natives-windows.jar"/>
-	<classpathentry kind="lib" path="C:/Users/UserPC/Desktop/Randy RAMDE/Java/LWJGL/3.1.7 build 8/lwjgl-openal.jar"/>
-	<classpathentry kind="lib" path="C:/Users/UserPC/Desktop/Randy RAMDE/Java/LWJGL/3.1.7 build 8/lwjgl-openal-natives-windows.jar"/>
-	<classpathentry kind="lib" path="C:/Users/UserPC/Desktop/Randy RAMDE/Java/LWJGL/3.1.7 build 8/lwjgl-opengl.jar"/>
-	<classpathentry kind="lib" path="C:/Users/UserPC/Desktop/Randy RAMDE/Java/LWJGL/3.1.7 build 8/lwjgl-opengl-natives-windows.jar"/>
 	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
@@ -25,9 +16,5 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/UserPC/Desktop/Randy RAMDE/Java/LWJGL/3.2.0 partial/lwjgl-nanovg.jar"/>
-	<classpathentry kind="lib" path="C:/Users/UserPC/Desktop/Randy RAMDE/Java/LWJGL/3.2.0 partial/lwjgl-nanovg-natives-windows.jar"/>
-	<classpathentry kind="lib" path="C:/Users/UserPC/Desktop/Randy RAMDE/Java/LWJGL/3.2.0 partial/lwjgl-assimp.jar"/>
-	<classpathentry kind="lib" path="C:/Users/UserPC/Desktop/Randy RAMDE/Java/LWJGL/3.2.0 partial/lwjgl-assimp-natives-windows.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
