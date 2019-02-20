@@ -10,10 +10,11 @@ Later version of libraries can be used, but not their new features to keep backw
 
 | Package                   | Version |
 | ------------------------- | ------- |
-| lwjgl (+native)           | 3.1.7   |
+| lwjgl (+native)           | 3.2.0   |
 | joml                      | 1.9.9   |
-| lwjgl-glfw (+native)      | 3.1.7   |
-| lwjgl-openal (+native)    | 3.1.7   |
+| lwjgl-glfw (+native)      | 3.2.0   |
+| lwjgl-openal (+native)    | 3.2.0   |
 | lwjgl-opengl (+native)    | 3.2.0   |
 | lwjgl-assimp (+native)    | 3.2.0   |
+| lwjgl-nanovg (+native)    | 3.2.0   |
 | pngdecoder                | 1.0     |
