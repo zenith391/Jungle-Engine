@@ -8,9 +8,19 @@ public class Game {
 	protected Window win;
 	protected IGameLogic logic;
 	private GameOptions opt;
-
-	public Game() {
-
+	double secsPerUpdate = 1.d / 30d;
+	private int targetFps = 60;
+	
+	public void setTargetFps(int target) {
+		targetFps = target;
+	}
+	
+	public void setTargetUps(int target) {
+		secsPerUpdate = 1.d / (double) target;
+	}
+	
+	public int getTargetFps() {
+		return targetFps;
 	}
 	
 	public Window getWindow() {
@@ -21,7 +31,7 @@ public class Game {
 		this.opt = opt;
 		running = true;
 		win = new Window();
-		win.init(opt);
+		win.init(this.opt);
 		logic.bind(this);
 		try {
 			logic.init(win);
@@ -38,17 +48,26 @@ public class Game {
 	}
 	
 	public double getTime() {
-        return System.nanoTime() / 1000000000.0;
+        return System.nanoTime() / 1000000000d;
 	}
 
 	public void loop() {
-		double secsPerUpdate = 1.0d / 60.0d;
 		double previous = getTime();
+		double previous2 = getTime();
 		double steps = 0.0;
+		int updates = 0;
+		int frames = 0;
 		while (running) {
 			double loopStartTime = getTime();
 			double elapsed = loopStartTime - previous;
 
+			if (previous2 < getTime() - 1) {
+				previous2 = getTime();
+				System.out.println(updates + " updates" + ", " + frames + " frames");
+				frames = 0;
+				updates = 0;
+			}
+			
 			previous = loopStartTime;
 			steps += elapsed;
 
@@ -56,10 +75,12 @@ public class Game {
 
 			while (steps >= secsPerUpdate) {
 				update();
+				updates++;
 				steps -= secsPerUpdate;
 			}
 
 			render();
+			frames++;
 			sync(loopStartTime);
 		}
 	}

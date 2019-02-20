@@ -2,6 +2,7 @@ package org.jungle.hud;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,20 +14,28 @@ public class Font {
 	
 	private int fontID;
 	
-	public static final String DEFAULT_FONT_FILE = "example/assets/fonts/opensans/OpenSans-Bold.ttf";
-	
 	private float size;
 	
 	private static Map<String, Integer> idRegister = new HashMap<>();
+	private static ArrayList<ByteBuffer> buffers = new ArrayList<>(); // Used to avoid ByteBuffers to be garbage-collected
 	
 	public static void register(String name, String file, long nvg) throws IOException {
 		ByteBuffer fontBuffer = Utils.ioResourceToByteBuffer(file, 150 * 1024);
-	    int font = nvgCreateFontMem(nvg, DEFAULT_FONT_FILE, fontBuffer, 0);
-	    System.out.println("gen: " + font);
+		buffers.add(fontBuffer);
+	    int font = nvgCreateFontMem(nvg, file, fontBuffer, 0);
 	    if (font == -1) {
-	        throw new IllegalStateException("Could not add font");
+	        throw new IllegalStateException("Could not create font");
 	    }
-	    idRegister.put(DEFAULT_FONT_FILE, font);
+	    System.out.println("Created font " + name + " with ID " + font);
+	    idRegister.put(file, font);
+	}
+	
+	/**
+	 * Get fonts arleady registered with <code>Font.register(name, file, nvg)</code>
+	 * @return fonts
+	 */
+	public static String[] getRegisteredFonts() {
+		return idRegister.keySet().toArray(new String[0]);
 	}
 	
 	/**
@@ -34,8 +43,10 @@ public class Font {
 	 * @param name
 	 */
 	public Font(String name, float size) {
+		if (!idRegister.containsKey(name)) {
+			throw new IllegalArgumentException("Font name not registered: " + name);
+		}
 		this.fontID = idRegister.get(name);
-		System.out.println(fontID);
 		this.size = size;
 	}
 

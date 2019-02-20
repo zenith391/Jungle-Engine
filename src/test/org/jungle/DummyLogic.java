@@ -11,7 +11,7 @@ import org.jungle.game.Game;
 import org.jungle.game.IGameLogic;
 import org.jungle.hud.Font;
 import org.jungle.renderers.IRenderer;
-import org.jungle.renderers.JungleRender;
+import org.jungle.renderers.jungle.JungleRender;
 import org.jungle.util.DirectionalLight;
 import org.jungle.util.Material;
 import org.jungle.util.MouseOperatedMSD;

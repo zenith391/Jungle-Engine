@@ -5,17 +5,18 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.jungle.Camera;
 import org.jungle.Spatial;
-import org.jungle.renderers.JungleRender;
+import org.jungle.renderers.IRenderer;
+import org.jungle.renderers.jungle.JungleRender;
 
 public class MeshSelectionDetector {
 
-	protected JungleRender render;
+	protected IRenderer render;
 	protected Vector3f dir = new Vector3f();
 	protected Vector3f min = new Vector3f(), max = new Vector3f();
 	protected Vector2f nearFar = new Vector2f();
 	protected Spatial selectedSpatial;
 	
-	public MeshSelectionDetector(JungleRender render) {
+	public MeshSelectionDetector(IRenderer render) {
 		this.render = render;
 	}
 	

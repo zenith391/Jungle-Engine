@@ -1,4 +1,4 @@
-package org.jungle.renderers;
+package org.jungle.renderers.jungle;
 
 import java.util.List;
 import java.util.Map;

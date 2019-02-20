@@ -1,4 +1,4 @@
-package org.jungle.renderers;
+package org.jungle.renderers.jungle;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -9,6 +9,8 @@ import org.jungle.Mesh;
 import org.jungle.Spatial;
 import org.jungle.Window;
 import org.jungle.game.Context;
+import org.jungle.renderers.IRenderer;
+import org.jungle.renderers.Transformation;
 import org.jungle.util.DirectionalLight;
 import org.jungle.util.PointLight;
 import org.jungle.util.ShaderProgram;
@@ -29,10 +31,6 @@ public class JungleRender implements IRenderer {
 	public static final int MAX_POINT_LIGHTS = 5;
 	public static final int MAX_SPOT_LIGHTS = 5;
 	private float specularPower = 16f;
-
-	public JungleRender() {
-
-	}
 	
 	public Transformation getTransformation() {
 		return transformation;
@@ -46,7 +44,7 @@ public class JungleRender implements IRenderer {
 
 	@Override
 	public void init(Window window) throws Exception {
-		transformation = new Transformation();
+		transformation = new JungleTransformation();
 		window.setProjectionMatrix(transformation.getProjectionMatrix((float) Math.toRadians(70.0f), window.getWidth(), window.getHeight(), Z_NEAR,
 				Z_FAR));
 		shaderProgram = new ShaderProgram();
@@ -177,6 +175,13 @@ public class JungleRender implements IRenderer {
 	public void cleanup() {
 		if (shaderProgram != null) {
 			shaderProgram.cleanup();
+		}
+	}
+
+	@Override
+	public void setPath(String dataName, String path) {
+		if (dataName.equals("shaderFolder")) {
+			setShaderFolder(path);
 		}
 	}
 
