@@ -82,7 +82,6 @@ public class Utils {
 		}
 		b.append((char) '\0');
 		bis.close();
-		// System.out.println("Res " + path + " == " + b.toString());
 		return b.toString();
 	}
 

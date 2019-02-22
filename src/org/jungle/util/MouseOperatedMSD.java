@@ -1,6 +1,5 @@
 package org.jungle.util;
 
-import org.joml.Intersectionf;
 import org.joml.Matrix4f;
 import org.joml.Vector2d;
 import org.joml.Vector3f;
@@ -9,7 +8,6 @@ import org.jungle.Camera;
 import org.jungle.Spatial;
 import org.jungle.Window;
 import org.jungle.renderers.IRenderer;
-import org.jungle.renderers.jungle.JungleRender;
 
 public class MouseOperatedMSD extends MeshSelectionDetector {
 

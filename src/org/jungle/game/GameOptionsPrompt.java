@@ -7,23 +7,17 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import java.awt.GridLayout;
 import javax.swing.JLabel;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
-import javax.swing.JProgressBar;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import javax.swing.JSeparator;
-import javax.swing.SwingConstants;
 import java.awt.SystemColor;
 
 public class GameOptionsPrompt extends JDialog {
 
+	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
 	private GameOptions opt;
 	private JCheckBox chckbxNewCheckBox_1;
@@ -31,10 +25,11 @@ public class GameOptionsPrompt extends JDialog {
 	private JLabel lblAdvanced;
 	private JCheckBox chckbxCullFace;
 	private JCheckBox chckbxNewCheckBox;
+	private JComboBox<String> comboBox;
 
 	public GameOptions generateOptions() {
 		GameOptions opt = new GameOptions();
-		opt.antialiasing = false;
+		opt.antialiasing = !comboBox.getSelectedItem().equals("No");
 		opt.cullFace = chckbxCullFace.isSelected();
 		opt.showTriangles = chckbxWireframeRender.isSelected();
 		opt.frustumCulling = chckbxNewCheckBox_1.isSelected();
@@ -62,7 +57,7 @@ public class GameOptionsPrompt extends JDialog {
 		lblAntialising.setBounds(10, 36, 66, 14);
 		contentPanel.add(lblAntialising);
 		
-		JComboBox<String> comboBox = new JComboBox<>();
+		comboBox = new JComboBox<>();
 		comboBox.setModel(new DefaultComboBoxModel<>(new String[] {"x4", "x2", "No"}));
 		comboBox.setSelectedIndex(2);
 		comboBox.setBounds(86, 32, 53, 22);

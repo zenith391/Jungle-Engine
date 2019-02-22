@@ -13,5 +13,17 @@ public class Keyboard {
 	public static boolean isKeyPressed(int key) {
 		return pressedKeys.contains(key);
 	}
+	
+	public static void setKeyPressed(int key, boolean press) {
+		if (press) {
+			if (!pressedKeys.contains(key)) {
+				pressedKeys.add(key);
+			}
+		} else {
+			if (pressedKeys.contains(key)) {
+				pressedKeys.remove((Integer) key);
+			}
+		}
+	}
 
 }

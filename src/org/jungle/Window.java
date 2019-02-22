@@ -10,6 +10,7 @@ import java.nio.IntBuffer;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
 import org.jungle.game.GameOptions;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
@@ -83,11 +84,10 @@ public class Window {
 	public void setFullscreen(boolean fullscreen) {
 		if (fullscreen != this.fullscreen) {
 			this.fullscreen = fullscreen;
-			glfwDestroyWindow(handle);
 			if (fullscreen) {
-				init(opt, glfwGetPrimaryMonitor());
+				glfwSetWindowMonitor(handle, glfwGetPrimaryMonitor(), 0, 0, 1920, 1080, GLFW_DONT_CARE);
 			} else {
-				init(opt);
+				glfwSetWindowMonitor(handle, NULL, 0, 0, 800, 600, GLFW_DONT_CARE);
 			}
 		}
 	}
@@ -110,6 +110,12 @@ public class Window {
 			glCullFace(GL_BACK);
 		} else {
 			glDisable(GL_CULL_FACE);
+		}
+		if (opt.blending) {
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		} else {
+			glDisable(GL_BLEND);
 		}
 		setFullscreen(opt.fullscreen);
 	}
@@ -152,10 +158,10 @@ public class Window {
 		
 		glfwSetKeyCallback(handle, (window, key, scancode, action, mods) -> {
 			if (action == GLFW_PRESS) {
-				Keyboard.pressedKeys.add(key);
+				Keyboard.setKeyPressed(key, true);
 			}
 			if (action == GLFW_RELEASE) {
-				Keyboard.pressedKeys.remove((Integer) key);
+				Keyboard.setKeyPressed(key, false);
 			}
 		});
 		
@@ -167,13 +173,13 @@ public class Window {
 		
 		glfwMakeContextCurrent(handle);
 		GL.createCapabilities();
-		setClearColor(new Vector4f(0.f, 0.f, 0.f, 0.f));
+		if (clearColor == null) {
+			setClearColor(new Vector4f(0.f, 0.f, 0.f, 0.f));
+		}
 		
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_STENCIL_TEST);
 		setOptions(opt);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 	
 	public void init(GameOptions opt) {

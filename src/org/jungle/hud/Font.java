@@ -27,7 +27,7 @@ public class Font {
 	        throw new IllegalStateException("Could not create font");
 	    }
 	    System.out.println("Created font " + name + " with ID " + font);
-	    idRegister.put(file, font);
+	    idRegister.put(name, font);
 	}
 	
 	/**
