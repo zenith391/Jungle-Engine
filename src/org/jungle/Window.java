@@ -81,13 +81,31 @@ public class Window {
 		glfwSetWindowTitle(handle, title);
 	}
 	
+	public boolean isFullscreen() {
+		return fullscreen;
+	}
+	
+	int oldX, oldY, oldW, oldH;
 	public void setFullscreen(boolean fullscreen) {
 		if (fullscreen != this.fullscreen) {
 			this.fullscreen = fullscreen;
 			if (fullscreen) {
+				MemoryStack stack = stackPush();
+				IntBuffer x = stack.mallocInt(1);
+				IntBuffer y = stack.mallocInt(1);
+				IntBuffer width = stack.mallocInt(1);
+				IntBuffer height = stack.mallocInt(1);
+				glfwGetWindowPos(handle, x, y);
+				glfwGetWindowSize(handle, width, height);
+				oldX = x.get(0);
+				oldY = y.get(0);
+				oldW = width.get(0);
+				oldH = height.get(0);
+				stack.close();
 				glfwSetWindowMonitor(handle, glfwGetPrimaryMonitor(), 0, 0, 1920, 1080, GLFW_DONT_CARE);
 			} else {
-				glfwSetWindowMonitor(handle, NULL, 0, 0, 800, 600, GLFW_DONT_CARE);
+				glfwSetWindowMonitor(handle, NULL, oldX, oldY, oldW, oldH, GLFW_DONT_CARE);
+				glfwSetWindowAttrib(handle, GLFW_DECORATED, GLFW_TRUE);
 			}
 		}
 	}

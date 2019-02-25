@@ -63,7 +63,6 @@ public class Game {
 
 			if (previous2 < getTime() - 1) {
 				previous2 = getTime();
-				System.out.println(updates + " updates" + ", " + frames + " frames");
 				frames = 0;
 				updates = 0;
 			}
