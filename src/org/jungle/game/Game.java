@@ -11,6 +11,17 @@ public class Game {
 	double secsPerUpdate = 1.d / 30d;
 	private int targetFps = 60;
 	
+	private int fps;
+	private int ups;
+	
+	public int getFPS() {
+		return fps;
+	}
+	
+	public int getUPS() {
+		return ups;
+	}
+	
 	public void setTargetFps(int target) {
 		targetFps = target;
 	}
@@ -63,6 +74,8 @@ public class Game {
 
 			if (previous2 < getTime() - 1) {
 				previous2 = getTime();
+				fps = frames;
+				ups = updates;
 				frames = 0;
 				updates = 0;
 			}
