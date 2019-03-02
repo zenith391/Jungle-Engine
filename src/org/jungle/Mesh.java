@@ -28,11 +28,21 @@ public class Mesh {
     
     private float boundingRadius = 1.25f;
     
+    private boolean frustum = true;
+    
     public static final Vector4f DEFAULT_COLOR = new Vector4f(0.75f, 0.75f, 0.75f, 1.f);
 
     public float getBoundingRadius() {
 		return boundingRadius;
 	}
+    
+    public boolean supportsFrustumCulling() {
+    	return frustum;
+    }
+    
+    public void setSupportsFrustum(boolean bool) {
+    	frustum = bool;
+    }
 
 	public void setBoundingRadius(float boundingRadius) {
 		this.boundingRadius = boundingRadius;

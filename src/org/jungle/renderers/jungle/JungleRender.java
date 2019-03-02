@@ -107,7 +107,7 @@ public class JungleRender implements IRenderer {
 		for (Mesh mesh : ctx.getMeshMap().keySet()) {
 		    shaderProgram.setUniform("material", mesh.getMaterial());
 		    mesh.renderList(ctx.getMeshMap().get(mesh), (Spatial gameItem) -> {
-		    	if (gameItem.isInFrustum() || filter == null) {
+		    	if (!mesh.supportsFrustumCulling() || gameItem.isInFrustum() || filter == null) {
 		    		Matrix4f modelViewMatrix = transformation.getModelViewMatrix(gameItem, viewMatrix);
 			        shaderProgram.setUniform("selected", gameItem.isSelected() ? 1f : 0f);
 			        shaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
