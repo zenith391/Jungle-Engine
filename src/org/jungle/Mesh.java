@@ -29,6 +29,7 @@ public class Mesh {
     private float boundingRadius = 1.25f;
     
     private boolean frustum = true;
+    private boolean cullFace = true;
     
     public static final Vector4f DEFAULT_COLOR = new Vector4f(0.75f, 0.75f, 0.75f, 1.f);
 
@@ -42,6 +43,14 @@ public class Mesh {
     
     public void setSupportsFrustum(boolean bool) {
     	frustum = bool;
+    }
+    
+    public boolean supportsCullFace() {
+    	return cullFace;
+    }
+    
+    public void setSupportsCullFace(boolean bool) {
+    	cullFace = bool;
     }
 
 	public void setBoundingRadius(float boundingRadius) {
@@ -156,13 +165,21 @@ public class Mesh {
     }
 
     public void render() {
+    	boolean wasEnabled = glIsEnabled(GL_CULL_FACE);
+    	if (!cullFace && wasEnabled) {
+    		glDisable(GL_CULL_FACE);
+    	}
         initRender();
 
         glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
 
         endRender();
+        
+        if (!cullFace && wasEnabled) {
+        	glEnable(GL_CULL_FACE);
+        }
     }
-
+    
     public void renderList(List<Spatial> spatials, Function<Spatial, Boolean> consumer) {
         initRender();
 
