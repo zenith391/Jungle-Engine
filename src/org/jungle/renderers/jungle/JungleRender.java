@@ -24,13 +24,23 @@ public class JungleRender implements IRenderer {
 	private static final float Z_NEAR = 0.01f;
 	private static final float Z_FAR = 1000.0f;
 	private boolean inited = false;
+	private boolean orthogonal = false;
 	private Transformation transformation;
 	private String shaders = "example/shaders/default";
 	private FrustumCullingFilter filter;
 
-	public static final int MAX_POINT_LIGHTS = 5;
-	public static final int MAX_SPOT_LIGHTS = 5;
+	public static int MAX_POINT_LIGHTS = 5;
+	public static int MAX_SPOT_LIGHTS = 5;
 	private float specularPower = 16f;
+	
+	public void setOrthogonal(boolean ortho) {
+		orthogonal = ortho;
+	}
+	
+	public void setMaxLights(int max) {
+		MAX_POINT_LIGHTS = max;
+		MAX_SPOT_LIGHTS = max;
+	}
 	
 	public Transformation getTransformation() {
 		return transformation;
@@ -45,8 +55,11 @@ public class JungleRender implements IRenderer {
 	@Override
 	public void init(Window window) throws Exception {
 		transformation = new JungleTransformation();
-		window.setProjectionMatrix(transformation.getProjectionMatrix((float) Math.toRadians(70.0f), window.getWidth(), window.getHeight(), Z_NEAR,
-				Z_FAR));
+		if (!orthogonal) {
+			window.setProjectionMatrix(transformation.getProjectionMatrix((float) Math.toRadians(70.0f), window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR));
+		} else {
+			window.setProjectionMatrix(transformation.getOrthoProjectionMatrix(window.getWidth()/2, window.getWidth()/2, window.getHeight()/2, window.getHeight()/2));
+		}
 		shaderProgram = new ShaderProgram();
 		shaderProgram.createVertexShader(Utils.loadResource(shaders + "/vertex.vs"));
 		shaderProgram.createFragmentShader(Utils.loadResource(shaders + "/fragment.fs"));
@@ -79,9 +92,13 @@ public class JungleRender implements IRenderer {
 		clear();
 		if (window.isResized()) {
 			glViewport(0, 0, window.getWidth(), window.getHeight());
-			window.setResized(false);
-			window.setProjectionMatrix(transformation.getProjectionMatrix(ctx.getCamera().getFov(), window.getWidth(), window.getHeight(), Z_NEAR,
-					Z_FAR));
+			//window.setResized(false);
+			if (orthogonal) {
+				window.setProjectionMatrix(transformation.getOrthoProjectionMatrix(-1, 1, -1, 1));
+			} else {
+				window.setProjectionMatrix(transformation.getProjectionMatrix(ctx.getCamera().getFov(), window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR));
+			}
+			
 		}
 		ctx.getCamera().setViewMatrix(transformation.getViewMatrix(ctx.getCamera()));
 		if (filter != null) {
@@ -89,14 +106,15 @@ public class JungleRender implements IRenderer {
 			filter.filter(ctx.getMeshMap());
 		}
 		//System.out.println("filtered!");
-		renderScene(ctx, ambientLight, pointLightList, spotLightList, directionalLight);
+		renderScene(window, ctx, ambientLight, pointLightList, spotLightList, directionalLight);
 		ctx.getHud().render(window);
 		//window.restoreState();
 	}
 	
-	public void renderScene(Context ctx, Vector3f ambientLight, PointLight[] pointLightList, SpotLight[] spotLightList, DirectionalLight directionalLight) {
+	public void renderScene(Window window, Context ctx, Vector3f ambientLight, PointLight[] pointLightList, SpotLight[] spotLightList, DirectionalLight directionalLight) {
 		shaderProgram.bind();
 
+		
 		shaderProgram.setUniform("projectionMatrix", ctx.getWindow().getProjectionMatrix());
 		shaderProgram.setUniform("texture_sampler", 0);
 
@@ -108,7 +126,12 @@ public class JungleRender implements IRenderer {
 		    shaderProgram.setUniform("material", mesh.getMaterial());
 		    mesh.renderList(ctx.getMeshMap().get(mesh), (Spatial gameItem) -> {
 		    	if (!mesh.supportsFrustumCulling() || gameItem.isInFrustum() || filter == null) {
-		    		Matrix4f modelViewMatrix = transformation.getModelViewMatrix(gameItem, viewMatrix);
+		    		Matrix4f modelViewMatrix = null;
+		    		if (orthogonal) {
+		    			modelViewMatrix = transformation.getOrtoProjModelMatrix(gameItem, window.getProjectionMatrix());
+		    		} else {
+		    			modelViewMatrix = transformation.getModelViewMatrix(gameItem, viewMatrix);
+		    		}
 			        shaderProgram.setUniform("selected", gameItem.isSelected() ? 1f : 0f);
 			        shaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
 			        return true;

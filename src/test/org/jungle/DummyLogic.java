@@ -32,7 +32,7 @@ public class DummyLogic implements IGameLogic {
 
 	private Vector3f cameraInc;
 	private Game game;
-	private IRenderer render;
+	private JungleRender render;
 	private Context ctx;
 
 	private Spatial spatial;
@@ -51,6 +51,7 @@ public class DummyLogic implements IGameLogic {
 
 	public DummyLogic() {
 		render = new JungleRender();
+		render.setOrthogonal(true);
 	}
 
 	@Override
@@ -73,7 +74,7 @@ public class DummyLogic implements IGameLogic {
 		
 		
 		spatial = new Spatial(meshs);
-		spatial.setPosition(0, 3, 0);
+		spatial.setPosition(0, 0, 0.5f);
 		spatial.setScale(2f);
 		ctx.addSpatial(spatial);
 		Vector3f lightPosition = new Vector3f(0, 2, 1);
@@ -157,11 +158,11 @@ public class DummyLogic implements IGameLogic {
 			rotation = 0;
 		}
 		msd.selectSpatial(ctx.getSpatials(), ctx.getWindow(), mouse.getCurrentPos(), camera);
-		spatial.setRotation(rotation, rotation, rotation);
+		//spatial.setRotation(rotation, rotation, rotation);
 		mouse.clearPos(game.getWindow().getWidth()/2, game.getWindow().getHeight()/2);
 		
-		ctx.getCamera().setPosition(35, -20, 0);
-		ctx.getCamera().setRotation(325, 265, 0);
+		//ctx.getCamera().setPosition(35, -20, 0);
+		//ctx.getCamera().setRotation(325, 265, 0);
 		//System.out.println(ctx.getCamera().getRotation().z);
 	}
 
@@ -174,6 +175,8 @@ public class DummyLogic implements IGameLogic {
 		//System.out.println(ambientLight);
 		render.render(window, ctx, ambientLight, pointLightList, spotLightList, directionalLight);
 		//System.out.println("rendered!");
+		spatial.setScale(0.1f);
+		spatial.setPosition(-0.9f, -0.9f, 0);
 	}
 
 	@Override

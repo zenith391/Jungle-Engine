@@ -14,7 +14,7 @@ public class Camera {
 	private float fov;
 
 	public Camera() {
-		position = new Vector3f(32, 0, 32);
+		position = new Vector3f(0, 0, 0);
 		rotation = new Vector3f(0, 0, 0);
 		fov = (float) Math.toRadians(70.0f);
 	}

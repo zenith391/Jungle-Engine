@@ -16,7 +16,7 @@ import org.joml.Vector4f;
 import org.jungle.util.Material;
 import org.lwjgl.system.MemoryUtil;
 
-public class Mesh {
+public class Mesh implements Cloneable {
 
     private final int vaoId;
 
@@ -121,6 +121,32 @@ public class Mesh {
             }
         }
     }
+	
+	private Mesh(int vao, int count, List<Integer> vboId) {
+		vertexCount = count;
+		vaoId = vao;
+		vboIdList = vboId;
+	}
+	
+	public Mesh clone() {
+		Mesh clone = new Mesh(vaoId, vertexCount, vboIdList);
+		clone.boundingRadius = boundingRadius;
+		clone.cullFace = cullFace;
+		clone.frustum = frustum;
+		clone.material = material;
+		return clone;
+	}
+	
+	/**
+	 * Very usefull method for meshes with only material (mostly texture) being different
+	 */
+	public Mesh cloneNoMaterial() {
+		Mesh clone = new Mesh(vaoId, vertexCount, vboIdList);
+		clone.boundingRadius = boundingRadius;
+		clone.cullFace = cullFace;
+		clone.frustum = frustum;
+		return clone;
+	}
 
     public Material getMaterial() {
         return material;
@@ -141,7 +167,7 @@ public class Mesh {
     private void initRender() {
         Texture texture = material.getTexture();
         if (texture != null) {
-            // Activate firs texture bank
+            // Activate first texture bank
             glActiveTexture(GL_TEXTURE0);
             // Bind the texture
             glBindTexture(GL_TEXTURE_2D, texture.getId());
@@ -165,9 +191,13 @@ public class Mesh {
     }
 
     public void render() {
-    	boolean wasEnabled = glIsEnabled(GL_CULL_FACE);
-    	if (!cullFace && wasEnabled) {
-    		glDisable(GL_CULL_FACE);
+    	boolean wasEnabled = true; // avoid having a GPU call (glIsEnabled) if useless later (not having
+    	// cull face is optional)
+    	if (!cullFace) {
+    		wasEnabled = glIsEnabled(GL_CULL_FACE);
+    		if (wasEnabled) {
+    			glDisable(GL_CULL_FACE);
+    		}
     	}
         initRender();
 
@@ -181,12 +211,13 @@ public class Mesh {
     }
     
     public void renderList(List<Spatial> spatials, Function<Spatial, Boolean> consumer) {
-        initRender();
+        if (spatials.isEmpty()) return;
+    	initRender();
 
-        for (Spatial gameItem : spatials) {
-            // Set up data required by gameItem
-            Boolean render = consumer.apply(gameItem);
-            // Render this game item
+        for (Spatial spatial : spatials) {
+            // Set up data required by spatial
+            Boolean render = consumer.apply(spatial);
+            // Render this spatial
             if (render) {
             	render();
             }
@@ -213,8 +244,7 @@ public class Mesh {
         // Delete the VAO
         glBindVertexArray(0);
         glDeleteVertexArrays(vaoId);
-    }
-    
+    }    
     public void deleteBuffers() {
         glDisableVertexAttribArray(0);
 

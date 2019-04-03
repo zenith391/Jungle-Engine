@@ -37,13 +37,19 @@
   	</dependency>
   	<dependency>
   		<groupId>org.lwjgl</groupId>
+  		<artifactId>lwjgl-opengl</artifactId>
+  		<version>${lwjgl.version}</version>
+  		<classifier>${lwjgl.natives}</classifier>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.lwjgl</groupId>
   		<artifactId>lwjgl-openal</artifactId>
   		<version>${lwjgl.version}</version>
   		<classifier>${lwjgl.natives}</classifier>
   	</dependency>
   	<dependency>
   		<groupId>org.lwjgl</groupId>
-  		<artifactId>lwjgl-opengl</artifactId>
+  		<artifactId>lwjgl-stb</artifactId>
   		<version>${lwjgl.version}</version>
   		<classifier>${lwjgl.natives}</classifier>
   	</dependency>
@@ -73,12 +79,12 @@
   	</dependency>
   	<dependency>
   		<groupId>org.lwjgl</groupId>
-  		<artifactId>lwjgl-openal</artifactId>
+  		<artifactId>lwjgl-opengl</artifactId>
   		<version>${lwjgl.version}</version>
   	</dependency>
   	<dependency>
   		<groupId>org.lwjgl</groupId>
-  		<artifactId>lwjgl-opengl</artifactId>
+  		<artifactId>lwjgl-stb</artifactId>
   		<version>${lwjgl.version}</version>
   	</dependency>
   	<dependency>
@@ -89,6 +95,11 @@
   	<dependency>
   		<groupId>org.lwjgl</groupId>
   		<artifactId>lwjgl-nanovg</artifactId>
+  		<version>${lwjgl.version}</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.lwjgl</groupId>
+  		<artifactId>lwjgl-openal</artifactId>
   		<version>${lwjgl.version}</version>
   	</dependency>
   	
@@ -104,7 +115,5 @@
   		<artifactId>pngdecoder</artifactId>
   		<version>1.0</version>
   	</dependency>
-  	
-  	
   </dependencies>
 </project>

@@ -194,7 +194,7 @@ public class ShaderProgram {
 
         glValidateProgram(programId);
         if (glGetProgrami(programId, GL_VALIDATE_STATUS) == 0) {
-            System.err.println("Warning validating Shader code: " + glGetProgramInfoLog(programId, 1024));
+            System.err.println("Warning validating shader code: " + glGetProgramInfoLog(programId, 1024));
         }
     }
 
