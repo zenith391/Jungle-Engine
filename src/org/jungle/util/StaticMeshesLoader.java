@@ -117,7 +117,8 @@ public class StaticMeshesLoader {
 
     private static void processVertices(AIMesh aiMesh, List<Float> vertices) {
         AIVector3D.Buffer aiVertices = aiMesh.mVertices();
-        while (aiVertices.hasRemaining()) {
+        aiVertices.rewind();
+        for (int i = 0; i < aiVertices.limit(); i++) {
             AIVector3D aiVertex = aiVertices.get();
             vertices.add(aiVertex.x());
             vertices.add(aiVertex.y());
@@ -152,8 +153,7 @@ public class StaticMeshesLoader {
         for (int i = 0; i < numFaces; i++) {
             AIFace aiFace = aiFaces.get(i);
             IntBuffer buffer = aiFace.mIndices();
-            //buffer.rewind();
-            //System.out.println(buffer.limit());
+            buffer.rewind();
             while (buffer.remaining() > 0) {
                 indices.add(buffer.get());
             }

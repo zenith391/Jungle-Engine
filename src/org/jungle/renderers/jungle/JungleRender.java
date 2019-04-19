@@ -16,6 +16,7 @@ import org.jungle.util.PointLight;
 import org.jungle.util.ShaderProgram;
 import org.jungle.util.SpotLight;
 import org.jungle.util.Utils;
+import org.jungle.viewport.ViewportManager;
 
 public class JungleRender implements IRenderer {
 
@@ -91,24 +92,22 @@ public class JungleRender implements IRenderer {
 			PointLight[] pointLightList, SpotLight[] spotLightList, DirectionalLight directionalLight) {
 		clear();
 		if (window.isResized()) {
-			glViewport(0, 0, window.getWidth(), window.getHeight());
-			//window.setResized(false);
+			ViewportManager manager = window.getViewportManager();
+			glViewport(manager.getX(window), manager.getY(window), manager.getWidth(window), manager.getHeight(window));
+			window.setResized(false);
 			if (orthogonal) {
 				window.setProjectionMatrix(transformation.getOrthoProjectionMatrix(-1, 1, -1, 1));
 			} else {
 				window.setProjectionMatrix(transformation.getProjectionMatrix(ctx.getCamera().getFov(), window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR));
 			}
-			
 		}
 		ctx.getCamera().setViewMatrix(transformation.getViewMatrix(ctx.getCamera()));
 		if (filter != null) {
 			filter.updateFrustum(window.getProjectionMatrix(), ctx.getCamera().getViewMatrix());
 			filter.filter(ctx.getMeshMap());
 		}
-		//System.out.println("filtered!");
 		renderScene(window, ctx, ambientLight, pointLightList, spotLightList, directionalLight);
 		ctx.getHud().render(window);
-		//window.restoreState();
 	}
 	
 	public void renderScene(Window window, Context ctx, Vector3f ambientLight, PointLight[] pointLightList, SpotLight[] spotLightList, DirectionalLight directionalLight) {

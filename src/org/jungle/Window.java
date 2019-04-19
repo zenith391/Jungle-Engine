@@ -6,15 +6,16 @@ import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 import java.nio.IntBuffer;
+import java.util.Objects;
 
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
 import org.jungle.game.GameOptions;
-import org.lwjgl.glfw.GLFW;
+import org.jungle.viewport.FullViewportManager;
+import org.jungle.viewport.ViewportManager;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryStack;
 
 public class Window {
@@ -25,8 +26,18 @@ public class Window {
 	private Matrix4f projectionMatrix;
 	private GameOptions opt;
 	private boolean fullscreen = false;
+	private ViewportManager manager = new FullViewportManager();
 	
 	private Vector4f clearColor;
+	
+	public ViewportManager getViewportManager() {
+		return manager;
+	}
+	
+	public void setViewportManager(ViewportManager viewport) {
+		Objects.requireNonNull(viewport, "viewport manager");
+		manager = viewport;
+	}
 	
 	public Vector4f getClearColor() {
 		return clearColor;
@@ -155,7 +166,7 @@ public class Window {
 	    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-		handle = glfwCreateWindow(620, 480, "Jungle Game", monitorID, NULL);
+		handle = glfwCreateWindow(640, 480, "Jungle Game", monitorID, NULL);
 		if (handle == NULL)
 			throw new RuntimeException("Failed to create the GLFW window");
 		try (MemoryStack stack = stackPush()) {

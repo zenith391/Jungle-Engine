@@ -51,14 +51,14 @@ public class DummyLogic implements IGameLogic {
 
 	public DummyLogic() {
 		render = new JungleRender();
-		render.setOrthogonal(true);
+		//render.setOrthogonal(true);
 	}
 
 	@Override
 	public void init(Window win) throws Exception {
 		Texture texture = new Texture("example/assets/grassblock.png");
 		System.out.println("Loading mesh..");
-		Mesh[] meshs = StaticMeshesLoader.load("example/assets/evil.obj", "example/assets/");
+		Mesh[] meshs = StaticMeshesLoader.load("example/assets/cubz.obj", "example/assets/");
 		System.out.println("Mesh loaded!");
 		System.out.println("meshes: " + meshs.length);
 		mesh = meshs;
