@@ -6,7 +6,6 @@ import org.joml.Vector3f;
 import org.jungle.Camera;
 import org.jungle.Spatial;
 import org.jungle.renderers.IRenderer;
-import org.jungle.renderers.jungle.JungleRender;
 
 public class MeshSelectionDetector {
 

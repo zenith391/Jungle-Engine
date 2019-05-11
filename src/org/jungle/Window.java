@@ -166,7 +166,7 @@ public class Window {
 	    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-		handle = glfwCreateWindow(640, 480, "Jungle Game", monitorID, NULL);
+		handle = glfwCreateWindow(640, 480, "Game", monitorID, NULL);
 		if (handle == NULL)
 			throw new RuntimeException("Failed to create the GLFW window");
 		try (MemoryStack stack = stackPush()) {
@@ -231,10 +231,6 @@ public class Window {
 	
 	public void show() {
 		glfwShowWindow(handle);
-	}
-	
-	public boolean isKeyPressed(int keyCode) {
-		return Keyboard.pressedKeys.contains(keyCode);
 	}
 	
 	public void update() {

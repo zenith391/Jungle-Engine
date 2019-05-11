@@ -2,7 +2,6 @@ package test.org.jungle;
 
 import org.jungle.game.Game;
 import org.jungle.game.GameOptions;
-import org.jungle.game.GameOptionsPrompt;
 
 public class JungleTest extends Game {
 

@@ -1,6 +1,17 @@
 package test.org.jungle;
 
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_X;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_Z;
+
+import org.joml.Vector2f;
+import org.joml.Vector3f;
 import org.jungle.Camera;
+import org.jungle.Keyboard;
 import org.jungle.Mesh;
 import org.jungle.MouseInput;
 import org.jungle.Spatial;
@@ -9,22 +20,13 @@ import org.jungle.Window;
 import org.jungle.game.Context;
 import org.jungle.game.Game;
 import org.jungle.game.IGameLogic;
-import org.jungle.hud.Font;
-import org.jungle.renderers.IRenderer;
 import org.jungle.renderers.jungle.JungleRender;
 import org.jungle.util.DirectionalLight;
 import org.jungle.util.Material;
 import org.jungle.util.MouseOperatedMSD;
-import org.jungle.util.OBJLoader;
 import org.jungle.util.PointLight;
 import org.jungle.util.SpotLight;
 import org.jungle.util.StaticMeshesLoader;
-
-import static org.lwjgl.glfw.GLFW.*;
-
-import org.joml.Vector2f;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
 
 public class DummyLogic implements IGameLogic {
 
@@ -58,7 +60,7 @@ public class DummyLogic implements IGameLogic {
 	public void init(Window win) throws Exception {
 		Texture texture = new Texture("example/assets/grassblock.png");
 		System.out.println("Loading mesh..");
-		Mesh[] meshs = StaticMeshesLoader.load("example/assets/cubz.obj", "example/assets/");
+		Mesh[] meshs = StaticMeshesLoader.load("example/assets/evil.obj", "example/assets/");
 		System.out.println("Mesh loaded!");
 		System.out.println("meshes: " + meshs.length);
 		mesh = meshs;
@@ -111,22 +113,22 @@ public class DummyLogic implements IGameLogic {
 	public void input(Window window) {
 		mouse.input(window);
 		cameraInc.set(0, 0, 0);
-		if (window.isKeyPressed(GLFW_KEY_W)) {
+		if (Keyboard.isKeyPressed(GLFW_KEY_W)) {
 			cameraInc.z = -1;
-		} else if (window.isKeyPressed(GLFW_KEY_S)) {
+		} else if (Keyboard.isKeyPressed(GLFW_KEY_S)) {
 			cameraInc.z = 1;
 		}
-		if (window.isKeyPressed(GLFW_KEY_A)) {
+		if (Keyboard.isKeyPressed(GLFW_KEY_A)) {
 			cameraInc.x = -1;
-		} else if (window.isKeyPressed(GLFW_KEY_D)) {
+		} else if (Keyboard.isKeyPressed(GLFW_KEY_D)) {
 			cameraInc.x = 1;
 		}
-		if (window.isKeyPressed(GLFW_KEY_Z)) { // W
+		if (Keyboard.isKeyPressed(GLFW_KEY_Z)) { // W
 			cameraInc.y = -1;
-		} else if (window.isKeyPressed(GLFW_KEY_X)) {
+		} else if (Keyboard.isKeyPressed(GLFW_KEY_X)) {
 			cameraInc.y = 1;
 		}
-		if (window.isKeyPressed(GLFW_KEY_ESCAPE)) {
+		if (Keyboard.isKeyPressed(GLFW_KEY_ESCAPE)) {
 			mouse.setGrabbed(false);
 		}
 		if (mouse.isLeftButtonPressed()) {
